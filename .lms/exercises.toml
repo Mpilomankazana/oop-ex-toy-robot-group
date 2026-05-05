@@ -3,7 +3,7 @@ _version = 0.1
 [oop-ex-toy-robot-group]
 activity_id = "oop-ex-toy-robot-group"
 
-[team]
+[team2]
 members = [
     "ronemeec025@student.wethinkcode.co.za",
     "mpmaneec025@student.wethinkcode.co.za",
