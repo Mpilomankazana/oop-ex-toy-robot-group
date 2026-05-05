@@ -5,7 +5,10 @@ activity_id = "oop-ex-toy-robot-group"
 
 [team]
 members = [
-    "email1@student.wethinkcode.co.za",
-    "email2@student.wethinkcode.co.za",
-    "email3@student.wethinkcode.co.za"
+    "ronemeec025@student.wethinkcode.co.za",
+    "mpmaneec025@student.wethinkcode.co.za",
+    "nhmboeec025@student.wethinkcode.co.za",
+    "mamaleec025@student.wethinkcode.co.za",
+    "zuguteec025@student.wethinkcode.co.za"
 ]
+
