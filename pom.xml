@@ -2,6 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>za.co.wethinkcode</groupId>
@@ -10,9 +11,14 @@
     <packaging>jar</packaging>
 
     <properties>
+        <!-- Java version -->
         <maven.compiler.target>21</maven.compiler.target>
         <maven.compiler.source>21</maven.compiler.source>
+
+        <!-- Encoding -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Dependency versions -->
         <version.flow>1.0.2</version.flow>
         <version.jackson>2.13.4.2</version.jackson>
         <version.junit>5.6.3</version.junit>
@@ -23,49 +29,73 @@
     </properties>
 
     <dependencies>
+
+        <!-- Jackson for JSON serialization and deserialization -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${version.jackson}</version>
         </dependency>
+
+        <!-- JUnit 5 API -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${version.junit}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JUnit 5 Engine -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${version.junit}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Mockito for mocking during tests -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>${version.mockito}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Picocli for command line handling -->
         <dependency>
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
             <version>${version.picocli}</version>
         </dependency>
-        <!-- The following 2 dependencies are REQUIRED to enable `flow`. -->
-        <!-- DO NOT REMOVE THEM. -->
+
+        <!-- REQUIRED for flow monitoring -->
+        <!-- DO NOT REMOVE -->
         <dependency>
             <groupId>za.co.wethinkcode</groupId>
             <artifactId>flow</artifactId>
             <version>${version.flow}</version>
         </dependency>
+
+        <!-- REQUIRED logging dependency -->
+        <!-- DO NOT REMOVE -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-nop</artifactId>
             <version>${version.slf4j}</version>
         </dependency>
+
     </dependencies>
 
     <build>
         <plugins>
+
+            <!-- Runs unit tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${version.surefire}</version>
             </plugin>
+
         </plugins>
     </build>
 
