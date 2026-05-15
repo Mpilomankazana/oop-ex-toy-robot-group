@@ -1,4 +1,4 @@
-package za.co.wethinkcode.robots.world.command;
+package za.co.wethinkcode.robots.command;
 
 import java.util.Set;
 
