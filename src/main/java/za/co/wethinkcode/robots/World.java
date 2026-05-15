@@ -1,6 +1,6 @@
-package za.co.wethinkcode.robots.world;
+package za.co.wethinkcode.robots;
 
-import za.co.wethinkcode.robots.world.robot.Robot;
+import za.co.wethinkcode.robots.robot.Robot;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

@@ -1,4 +1,4 @@
-package za.co.wethinkcode.robots.world.robot;
+package za.co.wethinkcode.robots.robot;
 
 public enum Direction {
     NORTH, EAST, SOUTH, WEST;

@@ -1,5 +1,7 @@
 package za.co.wethinkcode.robots.world;
 import org.junit.jupiter.api.Test;
+import za.co.wethinkcode.robots.World;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 //Tests world behaviour.
