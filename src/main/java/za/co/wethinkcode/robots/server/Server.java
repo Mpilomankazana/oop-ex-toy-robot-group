@@ -1,8 +1,8 @@
 package za.co.wethinkcode.robots.server;
 
 import za.co.wethinkcode.flow.Recorder;
-import za.co.wethinkcode.robots.world.World;
-import za.co.wethinkcode.robots.world.robot.Robot;
+import za.co.wethinkcode.robots.World;
+import za.co.wethinkcode.robots.robot.Robot;
 
 import java.net.ServerSocket;
 import java.net.Socket;
