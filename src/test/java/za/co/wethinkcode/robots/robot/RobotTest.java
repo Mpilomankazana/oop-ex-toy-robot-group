@@ -1,7 +1,5 @@
-package za.co.wethinkcode.robots.world.robot;
+package za.co.wethinkcode.robots.robot;
 import org.junit.jupiter.api.Test;
-
-import java.awt.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 

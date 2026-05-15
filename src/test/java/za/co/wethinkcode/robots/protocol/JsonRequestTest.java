@@ -1,6 +1,5 @@
-package za.co.wethinkcode.robots.world.protocol;
+package za.co.wethinkcode.robots.protocol;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.net.httpserver.Request;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -10,7 +9,7 @@ public class JsonRequestTest {
 
     //Should parse valid JSON requests.
     @Test
-    void shouldParseRequestJson() throws Exeption {
+    void shouldParseRequestJson() throws Exception {
 
         String json = """
                     {
