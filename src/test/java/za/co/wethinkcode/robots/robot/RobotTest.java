@@ -26,6 +26,16 @@ public class RobotTest {
         assertEquals(3, robot.getY());
     }
 
+    //Robot should move backward
+    @Test
+    void shouldMoveBackward() {
+
+        Robot robot = new Robot("HAL");
+
+        robot.back(2);
+        assertEquals(-2, robot.getY());
+    }
+
     //Robot should turn right correctly.
     @Test
     void shouldTurnRight() {
@@ -35,5 +45,75 @@ public class RobotTest {
         robot.turnRight();
 
         assertEquals(Direction.EAST, robot.getDirection());
+    }
+
+    //Robot should turn left.
+    @Test
+    void shouldTurnLeft() {
+
+        Robot robot = new Robot("HAL");
+
+        robot.turnLeft();
+        assertEquals(Direction.WEST, robot.getDirection());
+    }
+
+    // Should return to original position after 4 turns.
+    @Test
+    void shouldReturnToOriginalDirectionAfterFourRightTurns() {
+
+        Robot robot = new Robot("HAL");
+
+        robot.turnRight();
+        robot.turnRight();
+        robot.turnRight();
+        robot.turnRight();
+
+        assertEquals(Direction.NORTH, robot.getDirection());
+    }
+
+    // Should be able to move to the East.
+    @Test
+    void shouldMoveEastCorrectly() {
+
+        Robot robot = new Robot("HAL");
+
+        robot.turnRight();
+        robot.forward(5);
+
+        assertEquals(5, robot.getX());
+    }
+
+    // Robot should stay still if 0 steps are input.
+    @Test
+    void shouldNotMoveWhenStepsAreZero() {
+
+        Robot robot = new Robot("HAL");
+
+        robot.forward(0);
+
+        assertEquals(0, robot.getX());
+        assertEquals(0, robot.getY());
+    }
+
+    // Robot status should be updated.
+    @Test
+    void shouldUpdateRobotStatus() {
+
+        Robot robot = new Robot("HAL");
+
+        robot.setStatus("DAMAGED");
+
+        assertEquals("DAMAGED", robot.getStatus());
+    }
+
+    // Robot shield value should be updated.
+    @Test
+    void shouldUpdateShieldValue() {
+
+        Robot robot = new Robot("HAL");
+
+        robot.setShields(1);
+
+        assertEquals(1, robot.getShields());
     }
 }
