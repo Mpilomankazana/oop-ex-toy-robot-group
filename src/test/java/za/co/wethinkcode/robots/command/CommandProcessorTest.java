@@ -11,7 +11,9 @@ public class CommandProcessorTest {
     void shouldLaunchRobot() {
 
         CommandProcessor processor = new CommandProcessor();
+
         String result = processor.execute("launch");
+
         assertEquals("OK", result);
     }
 
@@ -20,7 +22,9 @@ public class CommandProcessorTest {
     void shouldRejectInvalidCommand() {
 
         CommandProcessor processor = new CommandProcessor();
+
         String result = processor.execute("dance");
+
         assertEquals("ERROR", result);
     }
 
@@ -29,7 +33,64 @@ public class CommandProcessorTest {
     void shouldReturnRobotState() {
 
         CommandProcessor processor = new CommandProcessor();
+
         String result = processor.execute("state");
+
         assertNotNull(result);
+    }
+
+    // Upper case should be accepted.
+    @Test
+    void shouldAcceptUppercaseCommand() {
+
+        CommandProcessor processor = new CommandProcessor();
+
+        String result = processor.execute("FORWARD");
+
+        assertEquals("OK", result);
+    }
+
+    // Empty command should be rejected.
+    @Test
+    void shouldRejectEmptyCommand() {
+
+        CommandProcessor processor = new CommandProcessor();
+
+        String result = processor.execute("");
+
+        assertEquals("ERROR", result);
+    }
+
+    // White space command should be rejected.
+    @Test
+    void shouldRejectWhitespaceCommand() {
+
+        CommandProcessor processor = new CommandProcessor();
+
+        String result = processor.execute(" ");
+
+        assertEquals("ERROR", result);
+    }
+
+    // Reload command should be accepted.
+    @Test
+    void shouldAcceptReloadCommand() {
+
+        CommandProcessor processor = new CommandProcessor();
+
+        String result = processor.execute("reload");
+
+        assertEquals("OK", result);
+    }
+
+    // Repair command should be accepted.
+    @Test
+    void shouldAcceptRepairCommand() {
+
+        CommandProcessor processor = new CommandProcessor();
+
+        String result = processor.execute("repair");
+
+        assertEquals("OK", result);
     }
 }
