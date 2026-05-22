@@ -12,6 +12,17 @@ public class CommandProcessor {
 
 
     public String execute(String command) {
+        if  (command == null){
+            return "ERROR";
+        }
+        command = command.trim();
+
+        if (command.isEmpty()){
+            return "ERROR";
+        }
+
+        command = command.toLowerCase();
+
         if (VALID_COMMANDS.contains(command.toLowerCase())) {
             return "OK";
         }
