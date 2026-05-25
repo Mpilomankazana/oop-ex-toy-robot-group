@@ -1,6 +1,6 @@
 package za.co.wethinkcode.robots.server;
 
-import za.co.wethinkcode.robots.World;
+import za.co.wethinkcode.robots.world.World;
 
 import java.io.*;
 import java.net.Socket;

@@ -1,4 +1,4 @@
-package za.co.wethinkcode.robots;
+package za.co.wethinkcode.robots.world;
 
 import za.co.wethinkcode.robots.robot.Robot;
 import java.util.ArrayList;
