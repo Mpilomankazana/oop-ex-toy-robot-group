@@ -25,9 +25,6 @@ public class CommandProcessor {
 
         if (VALID_COMMANDS.contains(command.toLowerCase())) {
 
-            if (command.equals("state")){
-                return "ROBOT STATE";
-            }
             return "OK";
         }
         return "ERROR";

@@ -1,6 +1,5 @@
 package za.co.wethinkcode.robots.world;
 import org.junit.jupiter.api.Test;
-import za.co.wethinkcode.robots.World;
 import za.co.wethinkcode.robots.robot.Robot;
 
 
