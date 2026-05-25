@@ -26,7 +26,7 @@ public class JsonResponseTest {
     @Test
     void shouldContainMessageField() throws  Exception {
 
-        Response response = new Respons(
+        Response response = new Response(
                 "OK",
                 "Ready"
         );
@@ -56,7 +56,7 @@ public class JsonResponseTest {
 
         String json = """
                 {
-                    "result":"OK,
+                    "result":"OK",
                     "message":"Done"
                 }
                 """;
