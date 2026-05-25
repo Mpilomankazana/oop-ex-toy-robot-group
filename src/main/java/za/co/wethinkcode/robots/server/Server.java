@@ -6,6 +6,7 @@ import za.co.wethinkcode.robots.robot.Robot;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 import java.util.Scanner;
 
 public class Server {
@@ -16,7 +17,15 @@ public class Server {
         System.out.println("Server listening on port 5000...");
 
         // CREATE WORLD (shared state for all clients)
-        World world = new World(10, 10);
+        World world;
+        try {
+            world = new World("config.properties");
+            System.out.println("World loaded from config.properties");
+        } catch (Exception e){
+            System.out.println("config.properties not found , using default 10*10 world.");
+            world = new World(10,10);
+
+        }
 
         // Console thread
         new Thread(new Runnable() {
@@ -31,9 +40,15 @@ public class Server {
                             System.exit(0);
                             break;
                         case "robots":
-                            System.out.println("Connected robots:");
-                            for (Robot robot : world.getRobots()) {
-                                System.out.println("  - " + robot.getName());
+                            List<Robot> allRobots = world.getRobots();
+                            if (allRobots.isEmpty()){
+                                System.out.println("No robots in the world.");
+                            }
+                            else{
+                                System.out.println("Robots in world");
+                                for (Robot robot : allRobots){
+                                    System.out.println(" " + robot.toString());
+                                }
                             }
                             break;
                         case "dump":
