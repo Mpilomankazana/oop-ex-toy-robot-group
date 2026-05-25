@@ -17,15 +17,16 @@ public class Server {
         System.out.println("Server listening on port 5000...");
 
         // CREATE WORLD (shared state for all clients)
-        World world;
+        World loadedWorld;
         try {
-            world = new World("config.properties");
+            loadedWorld = new World("config.properties");
             System.out.println("World loaded from config.properties");
         } catch (Exception e){
             System.out.println("config.properties not found , using default 10*10 world.");
-            world = new World(10,10);
+            loadedWorld = new World(10,10);
 
         }
+        final World world = loadedWorld;
 
         // Console thread
         new Thread(new Runnable() {
