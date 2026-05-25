@@ -52,6 +52,7 @@ public class JsonRequestTest {
     }
 
     // Empty arguments handled.
+    @Test
     void shouldHandleEmptyArguments() throws Exception {
 
         String json = """
