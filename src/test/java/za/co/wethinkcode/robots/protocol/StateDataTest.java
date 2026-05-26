@@ -9,7 +9,7 @@ public class StateDataTest {
     @Test
     void shouldStorePositionCorrectly() {
 
-        StateData state = new State();
+        StateData state = new StateData();
 
         state.setPosition(new int[] {2, 3});
 
@@ -20,7 +20,7 @@ public class StateDataTest {
     @Test
     void  shouldStoreDirectionCorrectly() {
 
-        StateData = state = new StateData();
+        StateData state = new StateData();
 
         state.setDirection("NORTH");
 
@@ -42,13 +42,13 @@ public class StateDataTest {
 
         StateData state = new StateData();
 
-        state.setshots(3);
+        state.setShots(3);
 
         assertEquals(3, state.getShots());
     }
 
     @Test
-    void shouldStorageStatusCorrectly() {
+    void shouldStoreStatusCorrectly() {
 
         StateData state = new StateData();
 
