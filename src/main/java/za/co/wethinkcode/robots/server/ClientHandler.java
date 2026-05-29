@@ -1,6 +1,9 @@
 package za.co.wethinkcode.robots.server;
 
 import za.co.wethinkcode.robots.world.World;
+import za.co.wethinkcode.robots.protocol.Protocol;
+import za.co.wethinkcode.robots.protocol.Request;
+import za.co.wethinkcode.robots.command.CommandProcessor;
 
 import java.io.*;
 import java.net.Socket;
@@ -9,6 +12,8 @@ public class ClientHandler implements Runnable {
 
     private final Socket socket;
     private final World world;
+    private String robotName;
+    private final CommandProcessor processor = new CommandProcessor();
 
     public ClientHandler(Socket socket, World world) {
         this.socket = socket;
@@ -24,22 +29,39 @@ public class ClientHandler implements Runnable {
                 socket.getOutputStream(), true)
         ) {
             String line;
-
             while ((line = in.readLine()) != null) {
                 System.out.println("Received: " + line);
 
-                // TEMP RESPONSE (we will replace with CommandProcessor later)
-                out.println("{\"result\":\"OK\",\"data\":{\"message\":\"received\"}}");
+                // Parse the incoming JSON request
+                Request request = Protocol.parseRequest(line);
+
+                if (request == null) {
+                    out.println(Protocol.buildErrorResponse("Could not parse arguments"));
+                    continue;
+                }
+
+                // Store robot name on launch
+                if ("launch".equals(request.getCommand())) {
+                    robotName = request.getRobot();
+                }
+
+                // Process the command
+                String command = request.getCommand();
+                String result = processor.execute(command);
+
+                if (result.equals("ERROR")) {
+                    out.println(Protocol.buildErrorResponse("Unsupported command"));
+                } else {
+                    out.println(Protocol.buildOkResponse(
+                        java.util.Map.of("message", "Done"), null));
+                }
             }
 
         } catch (IOException e) {
             System.out.println("Client disconnected: " + e.getMessage());
         } finally {
-            try {
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            if (robotName != null) world.removeRobot(robotName);
+            try { socket.close(); } catch (IOException e) { e.printStackTrace(); }
         }
     }
 }
