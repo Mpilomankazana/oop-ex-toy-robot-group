@@ -1,5 +1,6 @@
 package za.co.wethinkcode.robots.server;
 
+import za.co.wethinkcode.robots.robot.Robot;
 import za.co.wethinkcode.robots.world.World;
 import za.co.wethinkcode.robots.protocol.Protocol;
 import za.co.wethinkcode.robots.protocol.Request;
@@ -54,6 +55,15 @@ public class ClientHandler implements Runnable {
                 } else {
                     out.println(Protocol.buildOkResponse(
                         java.util.Map.of("message", "Done"), null));
+                }
+
+                // Check if robot is dead after each command
+                if (robotName != null) {
+                    Robot robot = world.getRobot(robotName);
+                    if (robot != null && "DEAD".equals(robot.getStatus())) {
+                        System.out.println(robotName + " is dead. Closing connection.");
+                        break;
+                    }
                 }
             }
 
