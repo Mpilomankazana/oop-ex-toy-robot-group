@@ -4,6 +4,7 @@ package za.co.wethinkcode.robots.world;
 public class MovementResults {
 
     private final boolean success;
+
     private final String message;
 
     public MovementResults(boolean success, String message){
@@ -14,6 +15,7 @@ public class MovementResults {
     public boolean isSuccess(){
         return success;
     }
+
 
     public String getMessege(){
         return message;
