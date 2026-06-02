@@ -151,4 +151,30 @@ public class World {
 
         return x + "," + y;
     }
+
+    public synchronized Movement moveForward(Robot robot,int steps){
+
+        int newX = robot.getX();
+        int newY = robot.getY();
+        switch (robot.getDirection()){
+
+            case NORTH -> newY += steps;
+            case SOUTH -> newY -= steps;
+            case EAST -> newX += steps;
+            case WEST -> newX -= steps;
+        }
+        if (isBlocked(newX, newY)) {
+            return  new Movement(false, "Obstructed");
+        }
+
+        robot.setX(newX);
+        robot.setY(newY);
+
+        return new Movement(true, "Moved");
+
+    }
+
+    public  synchronized Movement moveBack(Robot robot, int steps){
+        return  moveForward(robot, -steps);
+    }
 }
