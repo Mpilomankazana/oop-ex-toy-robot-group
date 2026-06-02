@@ -1,5 +1,7 @@
 package za.co.wethinkcode.robots.client;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import za.co.wethinkcode.robots.protocol.Protocol;
 
 import java.io.*;
@@ -7,6 +9,8 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class Client {
+
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     public static void main(String[] args) throws Exception {
 
@@ -33,7 +37,8 @@ public class Client {
         String launchJson = "{\"robot\":\"" + robotName + "\",\"command\":\"launch\",\"arguments\":[\"sniper\",5,5]}";
         out.println(launchJson);
         String launchResponse = in.readLine();
-        System.out.println("Launch response: " + launchResponse);
+
+        displayLaunchResponse(launchResponse);
 
         while (true) {
             System.out.println(robotName + "> ");
@@ -48,16 +53,94 @@ public class Client {
             out.println(json);
 
             String response = in.readLine();
-            int start = response.indexOf("\"message\":\"") + 11;
-            int end = response.indexOf("\"", start);
-            String message = response.substring(start, end);
-            System.out.println();
-            System.out.print("Server: " + message);
+
+            if (input.equalsIgnoreCase("look")) {
+
+                displayLookResponse(response);
+            }
+             else if (input.equalsIgnoreCase("state")) {
+                displayStateResponse(response);
+            } else {
+
+                System.out.println("Server: " + response);
+            }
 
         }
+
 
         socket.close();
 
     }
 
-}
+
+private static void displayLaunchResponse(String response) {
+        try {
+            JsonNode node = mapper.readTree(response);
+            JsonNode state = node.get("state");
+            if (state != null) {
+                System.out.println("Robot launched successfully!");
+                System.out.println("Position: " + state.get("position"));
+                System.out.println("Direction:" + state.get("direction").asText());
+            } else {
+                System.out.println("Launch response: " + response);
+            }
+        }catch (Exception e) {
+            System.out.println("Launch response: " + response);
+
+            }
+        }
+
+        private static void displayLookResponse(String response) {
+        try {
+            JsonNode node = mapper.readTree(response);
+            JsonNode objects = node.get("data").get("objects");
+            if (objects != null) {
+                System.out.println("You see");
+                for (JsonNode obj : objects) {
+                        System.out.println(" " +
+                                obj.get("direction").asText() + ": " +
+                                obj.get("type").asText() + " at distance " +
+                                obj.get("distance").asInt()
+                        );
+                    }
+                } else {
+                    System.out.println("Nothing is visible");
+                }
+            }catch(Exception e ){
+                System.out.println(response);
+            }
+        }
+
+            private static void displayStateResponse(String response) {
+                try {
+                    JsonNode node = mapper.readTree(response);
+                    JsonNode state = node.get("state");
+                    if (state != null) {
+                        System.out.println("Robot state:");
+                        System.out.println("  Position:  " + state.get("position"));
+                        System.out.println("  Direction: " + state.get("direction").asText());
+                        System.out.println("  Shields:   " + state.get("shields").asInt());
+                        System.out.println("  Shots:     " + state.get("shots").asInt());
+                        System.out.println("  Status:    " + state.get("status").asText());
+                    } else {
+                        System.out.println(response);
+                    }
+                } catch (Exception e) {
+                    System.out.println(response);
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
