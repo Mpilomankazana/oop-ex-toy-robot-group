@@ -152,7 +152,7 @@ public class World {
         return x + "," + y;
     }
 
-    public synchronized Movement moveForward(Robot robot,int steps){
+    public synchronized MovementResults moveForward(Robot robot, int steps){
 
         int newX = robot.getX();
         int newY = robot.getY();
@@ -164,17 +164,17 @@ public class World {
             case WEST -> newX -= steps;
         }
         if (isBlocked(newX, newY)) {
-            return  new Movement(false, "Obstructed");
+            return  new MovementResults(false, "Obstructed");
         }
 
         robot.setX(newX);
         robot.setY(newY);
 
-        return new Movement(true, "Moved");
+        return new MovementResults(true, "Moved");
 
     }
 
-    public  synchronized Movement moveBack(Robot robot, int steps){
+    public  synchronized MovementResults moveBack(Robot robot, int steps){
         return  moveForward(robot, -steps);
     }
 }
