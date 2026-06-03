@@ -1,6 +1,12 @@
 package za.co.wethinkcode.robots.server;
 
+import za.co.wethinkcode.robots.protocol.Protocol;
+import za.co.wethinkcode.robots.protocol.Request;
+import za.co.wethinkcode.robots.protocol.StateData;
+import za.co.wethinkcode.robots.robot.Robot;
 import za.co.wethinkcode.robots.world.World;
+import za.co.wethinkcode.robots.world.MovementResults;
+import za.co.wethinkcode.robots.command.CommandProcessor;
 
 import java.io.*;
 import java.net.Socket;
@@ -9,6 +15,8 @@ public class ClientHandler implements Runnable {
 
     private final Socket socket;
     private final World world;
+    private String robotName;
+    private final CommandProcessor processor = new CommandProcessor();
 
     public ClientHandler(Socket socket, World world) {
         this.socket = socket;
@@ -24,22 +32,105 @@ public class ClientHandler implements Runnable {
                 socket.getOutputStream(), true)
         ) {
             String line;
-
             while ((line = in.readLine()) != null) {
                 System.out.println("Received: " + line);
 
-                // TEMP RESPONSE (we will replace with CommandProcessor later)
-                out.println("{\"result\":\"OK\",\"data\":{\"message\":\"received\"}}");
+                Request request = Protocol.parseRequest(line);
+                if (request == null) {
+                    out.println(Protocol.buildErrorResponse("Invalid JSON"));
+                    continue;
+                }
+
+                robotName = request.getRobot();
+                String command = request.getCommand();
+
+                switch (command.toLowerCase()) {
+                    case "launch" -> {
+                        Robot robot = new Robot(robotName);
+                        world.addRobot(robot);
+                        StateData state = new StateData(
+                            new int[]{robot.getX(), robot.getY()},
+                            robot.getDirection().name(),
+                            robot.getShields(),
+                            robot.getShots(),
+                            robot.getStatus()
+                        );
+                        out.println(Protocol.buildOkResponse("Launched", state));
+                    }
+                    case "state" -> {
+                        Robot robot = world.getRobot(robotName);
+                        if (robot == null) {
+                            out.println(Protocol.buildErrorResponse("Robot not found"));
+                            continue;
+                        }
+                        StateData state = new StateData(
+                            new int[]{robot.getX(), robot.getY()},
+                            robot.getDirection().name(),
+                            robot.getShields(),
+                            robot.getShots(),
+                            robot.getStatus()
+                        );
+                        out.println(Protocol.buildOkResponse("State", state));
+                    }
+                    case "forward" -> {
+                        Robot robot = world.getRobot(robotName);
+                        if (robot == null) {
+                            out.println(Protocol.buildErrorResponse("Robot not found"));
+                            continue;
+                        }
+                        int steps = Integer.parseInt(
+                            request.getArguments()[0].toString());
+                        MovementResults result = world.moveForward(robot, steps);
+                        StateData state = new StateData(
+                            new int[]{robot.getX(), robot.getY()},
+                            robot.getDirection().name(),
+                            robot.getShields(),
+                            robot.getShots(),
+                            robot.getStatus()
+                        );
+                        out.println(Protocol.buildOkResponse(
+                            result.getMessege(), state));
+                    }
+                    case "back" -> {
+                        Robot robot = world.getRobot(robotName);
+                        if (robot == null) {
+                            out.println(Protocol.buildErrorResponse("Robot not found"));
+                            continue;
+                        }
+                        int steps = Integer.parseInt(
+                            request.getArguments()[0].toString());
+                        MovementResults result = world.moveBack(robot, steps);
+                        StateData state = new StateData(
+                            new int[]{robot.getX(), robot.getY()},
+                            robot.getDirection().name(),
+                            robot.getShields(),
+                            robot.getShots(),
+                            robot.getStatus()
+                        );
+                        out.println(Protocol.buildOkResponse(
+                            result.getMessege(), state));
+                    }
+                    default -> {
+                        out.println(Protocol.buildOkResponse(
+                            java.util.Map.of("message", "Command received: " + command), null));
+                            }
+                    }
+
+                // Check if robot is dead after each command
+                if (robotName != null) {
+                    Robot robot = world.getRobot(robotName);
+                    if (robot != null && "DEAD".equals(robot.getStatus())) {
+                        System.out.println(robotName + " is dead. Closing connection.");
+                        break;
+                    }
+                }
             }
 
         } catch (IOException e) {
             System.out.println("Client disconnected: " + e.getMessage());
         } finally {
-            try {
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            if (robotName != null) world.removeRobot(robotName);
+            try { socket.close(); } catch (IOException e) { e.printStackTrace(); }
         }
     }
 }

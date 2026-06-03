@@ -65,4 +65,22 @@ public class MovementTest {
         assertEquals(0, robot.getX());
         assertEquals(0, robot.getY());
     }
+
+    @Test
+    void shouldBlockForwardMovementWhenObstacleExists(){
+
+        World world = new World(10,10);
+        Robot robot = new Robot("HAL");
+        world.addRobot(robot);
+        world.addObstacle(0,1);
+
+        MovementResults result = world.moveForward(robot,1);
+
+        assertFalse(result.isSuccess());
+
+        assertEquals("Obstructed" , result.getMessege());
+
+        assertEquals(0, robot.getX());
+        assertEquals(0, robot.getY());
+    }
 }
