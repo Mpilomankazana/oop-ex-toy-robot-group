@@ -24,9 +24,9 @@ public class CombatTest {
 
         Robot robot = new Robot("HAL");
 
-        robot.setShields(5);
+        robot.setShots(5);
 
-        robot.setShields(robot.getShots() - 1);
+        robot.setShots(robot.getShots() - 1);
 
         assertEquals(4, robot.getShots());
     }
