@@ -41,16 +41,73 @@ public class Client {
         displayLaunchResponse(launchResponse);
 
         while (true) {
-            System.out.println(robotName + "> ");
+            System.out.print(robotName + "> ");
             String input = scanner.nextLine();
+
+            if(input.trim().isEmpty()) {
+                continue;
+            }
 
             if (input.equalsIgnoreCase("quit")) {
                 System.out.println("Goodbye");
                 break;
             }
 
-            String json = "{\"robot\":\"" + robotName + "\",\"command\":\"" + input + "\",\"arguments\":[]}";
+           // String json = "{\"robot\":\"" + robotName + "\",\"command\":\"" + input + "\",\"arguments\":[]}";
+            String[] parts = input.trim().split("\\s+");
+            String command = parts[0].toLowerCase();
+
+            String json;
+
+            switch (command) {
+                case "forward":
+                case "back":
+
+                    if (parts.length < 2) {
+                        System.out.println("Usage: " + command + " <steps>");
+                        continue;
+                    }
+
+                    try {
+                        Integer.parseInt(parts[1]);
+                    }catch (NumberFormatException e) {
+                        System.out.println("Steps must be a number");
+                        continue;
+                    }
+
+                    json = "{\"robot\":\"" + robotName +
+                            "\",\"command\":\"" + command +
+                            "\",\"arguments\":[" + parts[1] + "]}";
+                    break;
+
+                case "turn":
+                    if (parts.length < 2) {
+                        System.out.println("Usage: turn left/right");
+                        continue;
+                    }
+
+                    json = "{\"robot\":\"" + robotName +
+                            "\",\"command\":\"turn\"" +
+                            "\",\"arguments\":[\"" + parts[1] + "\"]}";
+
+                    break;
+                case "fire":
+                case "look":
+                case"state":
+
+                    json = "{\"robot\":\"" + robotName +
+                            "\",\"command\":\"" + command +
+                            "\",\"arguments\":[]}";
+                    break;
+
+                default:
+                    System.out.println("Unknown command");
+                    continue;
+
+            }
             out.println(json);
+
+
 
             String response = in.readLine();
 
@@ -60,16 +117,23 @@ public class Client {
             }
              else if (input.equalsIgnoreCase("state")) {
                 displayStateResponse(response);
+
+            } else if (command.equals("forward")
+                    || command.equals("back")
+                    || command. equals("turn")
+                    || command.equals("fire")) {
+
+                System.out.println(response);
+
             } else {
 
-                System.out.println("Server: " + response);
+                System.out.println(response);
             }
 
         }
 
 
         socket.close();
-
     }
 
 
