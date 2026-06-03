@@ -1,9 +1,10 @@
 package za.co.wethinkcode.robots.server;
 
-import za.co.wethinkcode.robots.robot.Robot;
-import za.co.wethinkcode.robots.world.World;
 import za.co.wethinkcode.robots.protocol.Protocol;
 import za.co.wethinkcode.robots.protocol.Request;
+import za.co.wethinkcode.robots.protocol.StateData;
+import za.co.wethinkcode.robots.robot.Robot;
+import za.co.wethinkcode.robots.world.World;
 import za.co.wethinkcode.robots.command.CommandProcessor;
 
 import java.io.*;
@@ -33,28 +34,46 @@ public class ClientHandler implements Runnable {
             while ((line = in.readLine()) != null) {
                 System.out.println("Received: " + line);
 
-                // Parse the incoming JSON request
                 Request request = Protocol.parseRequest(line);
-
                 if (request == null) {
-                    out.println(Protocol.buildErrorResponse("Could not parse arguments"));
+                    out.println(Protocol.buildErrorResponse("Invalid JSON"));
                     continue;
                 }
 
-                // Store robot name on launch
-                if ("launch".equals(request.getCommand())) {
-                    robotName = request.getRobot();
-                }
-
-                // Process the command
+                robotName = request.getRobot();
                 String command = request.getCommand();
-                String result = processor.execute(command);
 
-                if (result.equals("ERROR")) {
-                    out.println(Protocol.buildErrorResponse("Unsupported command"));
-                } else {
-                    out.println(Protocol.buildOkResponse(
-                        java.util.Map.of("message", "Done"), null));
+                switch (command.toLowerCase()) {
+                    case "launch" -> {
+                        Robot robot = new Robot(robotName);
+                        world.addRobot(robot);
+                        StateData state = new StateData(
+                            new int[]{robot.getX(), robot.getY()},
+                            robot.getDirection().name(),
+                            robot.getShields(),
+                            robot.getShots(),
+                            robot.getStatus()
+                        );
+                        out.println(Protocol.buildOkResponse("Launched", state));
+                    }
+                    case "state" -> {
+                        Robot robot = world.getRobot(robotName);
+                        if (robot == null) {
+                            out.println(Protocol.buildErrorResponse("Robot not found"));
+                            continue;
+                        }
+                        StateData state = new StateData(
+                            new int[]{robot.getX(), robot.getY()},
+                            robot.getDirection().name(),
+                            robot.getShields(),
+                            robot.getShots(),
+                            robot.getStatus()
+                        );
+                        out.println(Protocol.buildOkResponse("State", state));
+                    }
+                    default -> {
+                        out.println(Protocol.buildErrorResponse("Command not implemented yet: " + command));
+                    }
                 }
 
                 // Check if robot is dead after each command
