@@ -5,6 +5,7 @@ import za.co.wethinkcode.robots.protocol.Request;
 import za.co.wethinkcode.robots.protocol.StateData;
 import za.co.wethinkcode.robots.robot.Robot;
 import za.co.wethinkcode.robots.world.World;
+import za.co.wethinkcode.robots.world.MovementResults;
 import za.co.wethinkcode.robots.command.CommandProcessor;
 
 import java.io.*;
@@ -71,8 +72,47 @@ public class ClientHandler implements Runnable {
                         );
                         out.println(Protocol.buildOkResponse("State", state));
                     }
+                    case "forward" -> {
+                        Robot robot = world.getRobot(robotName);
+                        if (robot == null) {
+                            out.println(Protocol.buildErrorResponse("Robot not found"));
+                            continue;
+                        }
+                        int steps = Integer.parseInt(
+                            request.getArguments()[0].toString());
+                        MovementResults result = world.moveForward(robot, steps);
+                        StateData state = new StateData(
+                            new int[]{robot.getX(), robot.getY()},
+                            robot.getDirection().name(),
+                            robot.getShields(),
+                            robot.getShots(),
+                            robot.getStatus()
+                        );
+                        out.println(Protocol.buildOkResponse(
+                            result.getMessege(), state));
+                    }
+                    case "back" -> {
+                        Robot robot = world.getRobot(robotName);
+                        if (robot == null) {
+                            out.println(Protocol.buildErrorResponse("Robot not found"));
+                            continue;
+                        }
+                        int steps = Integer.parseInt(
+                            request.getArguments()[0].toString());
+                        MovementResults result = world.moveBack(robot, steps);
+                        StateData state = new StateData(
+                            new int[]{robot.getX(), robot.getY()},
+                            robot.getDirection().name(),
+                            robot.getShields(),
+                            robot.getShots(),
+                            robot.getStatus()
+                        );
+                        out.println(Protocol.buildOkResponse(
+                            result.getMessege(), state));
+                    }
                     default -> {
-                        out.println(Protocol.buildErrorResponse("Command not implemented yet: " + command));
+                        out.println(Protocol.buildErrorResponse(
+                            "Command not implemented yet: " + command));
                     }
                 }
 
