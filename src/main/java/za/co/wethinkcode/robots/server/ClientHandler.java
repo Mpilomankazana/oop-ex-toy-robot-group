@@ -111,10 +111,10 @@ public class ClientHandler implements Runnable {
                             result.getMessege(), state));
                     }
                     default -> {
-                        out.println(Protocol.buildErrorResponse(
-                            "Command not implemented yet: " + command));
+                        out.println(Protocol.buildOkResponse(
+                            java.util.Map.of("message", "Command received: " + command), null));
+                            }
                     }
-                }
 
                 // Check if robot is dead after each command
                 if (robotName != null) {
