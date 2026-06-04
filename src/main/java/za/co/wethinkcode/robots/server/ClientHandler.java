@@ -82,7 +82,7 @@ public class ClientHandler implements Runnable {
                         }
                         int steps = Integer.parseInt(
                             request.getArguments()[0].toString());
-                        MovementResults result = world.moveForward(robot, steps);
+                        int moved = engine.moveForward(robot, steps, world);
                         StateData state = new StateData(
                             new int[]{robot.getX(), robot.getY()},
                             robot.getDirection().name(),
@@ -91,7 +91,7 @@ public class ClientHandler implements Runnable {
                             robot.getStatus()
                         );
                         out.println(Protocol.buildOkResponse(
-                            result.getMessege(), state));
+                            "Moved " + moved + " step(s)", state));
                     }
                     case "back" -> {
                         Robot robot = world.getRobot(robotName);
@@ -170,6 +170,9 @@ public class ClientHandler implements Runnable {
                                         "shotLeft", result.shotleft),
                                 state
                         ));
+                    }
+                    default -> {
+                        out.println(Protocol.buildErrorResponse("Command not implemented: " + command));
                     }
 
 
