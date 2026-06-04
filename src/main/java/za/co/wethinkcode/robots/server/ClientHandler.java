@@ -7,6 +7,7 @@ import za.co.wethinkcode.robots.robot.Robot;
 import za.co.wethinkcode.robots.world.World;
 import za.co.wethinkcode.robots.world.MovementResults;
 import za.co.wethinkcode.robots.command.CommandProcessor;
+import za.co.wethinkcode.robots.robot.Direction;
 
 import java.io.*;
 import java.net.Socket;
@@ -17,6 +18,7 @@ public class ClientHandler implements Runnable {
     private final World world;
     private String robotName;
     private final CommandProcessor processor = new CommandProcessor();
+    private final GameEngine engine = new GameEngine();
 
     public ClientHandler(Socket socket, World world) {
         this.socket = socket;
@@ -110,10 +112,22 @@ public class ClientHandler implements Runnable {
                         out.println(Protocol.buildOkResponse(
                             result.getMessege(), state));
                     }
-                    default -> {
-                        out.println(Protocol.buildOkResponse(
-                            java.util.Map.of("message", "Command received: " + command), null));
-                            }
+                    case "turn" -> {
+                        Robot robot = world.getRobot(robotName);
+                        if (robot == null){
+                            out.println(Protocol.buildErrorResponse("Robot not found"));
+                            continue;
+                        }
+                        String dir =request.getArguments()[0].toString();
+                        Direction turned = engine.turn(robot, dir);
+                        if (turned == null){
+                            out.println(Protocol.buildErrorResponse("Invalid direction: " + dir));
+                            continue;
+                        }
+
+                    }
+
+
                     }
 
                 // Check if robot is dead after each command
