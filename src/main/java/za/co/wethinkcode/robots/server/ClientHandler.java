@@ -7,6 +7,7 @@ import za.co.wethinkcode.robots.robot.Robot;
 import za.co.wethinkcode.robots.world.World;
 import za.co.wethinkcode.robots.world.MovementResults;
 import za.co.wethinkcode.robots.command.CommandProcessor;
+import za.co.wethinkcode.robots.robot.Direction;
 
 import java.io.*;
 import java.net.Socket;
@@ -17,6 +18,7 @@ public class ClientHandler implements Runnable {
     private final World world;
     private String robotName;
     private final CommandProcessor processor = new CommandProcessor();
+    private final GameEngine engine = new GameEngine();
 
     public ClientHandler(Socket socket, World world) {
         this.socket = socket;
@@ -80,7 +82,7 @@ public class ClientHandler implements Runnable {
                         }
                         int steps = Integer.parseInt(
                             request.getArguments()[0].toString());
-                        MovementResults result = world.moveForward(robot, steps);
+                        int moved = engine.moveForward(robot, steps, world);
                         StateData state = new StateData(
                             new int[]{robot.getX(), robot.getY()},
                             robot.getDirection().name(),
@@ -89,7 +91,7 @@ public class ClientHandler implements Runnable {
                             robot.getStatus()
                         );
                         out.println(Protocol.buildOkResponse(
-                            result.getMessege(), state));
+                            "Moved " + moved + " step(s)", state));
                     }
                     case "back" -> {
                         Robot robot = world.getRobot(robotName);
@@ -99,7 +101,7 @@ public class ClientHandler implements Runnable {
                         }
                         int steps = Integer.parseInt(
                             request.getArguments()[0].toString());
-                        MovementResults result = world.moveBack(robot, steps);
+                        int moved = engine.moveBack(robot, steps, world);
                         StateData state = new StateData(
                             new int[]{robot.getX(), robot.getY()},
                             robot.getDirection().name(),
@@ -108,12 +110,72 @@ public class ClientHandler implements Runnable {
                             robot.getStatus()
                         );
                         out.println(Protocol.buildOkResponse(
-                            result.getMessege(), state));
+                            "Moved back " + moved + " step(s)", state));
+                    }
+                    case "turn" -> {
+                        Robot robot = world.getRobot(robotName);
+                        if (robot == null) {
+                            out.println(Protocol.buildErrorResponse("Robot not found"));
+                            continue;
+                        }
+                        String dir = request.getArguments()[0].toString();
+                        Direction turned = engine.turn(robot, dir);
+                        if (turned == null) {
+                            out.println(Protocol.buildErrorResponse("Invalid direction: " + dir));
+                            continue;
+                        }
+                        StateData state = new StateData(
+                                new int[]{robot.getX(), robot.getY()},
+                                robot.getDirection().name(),
+                                robot.getShields(),
+                                robot.getShots(),
+                                robot.getStatus()
+                        );
+                        out.println(Protocol.buildOkResponse("Turned " + dir, state));
+                    }
+                    case "look" -> {
+                        Robot robot = world.getRobot(robotName);
+                        if (robot == null) {
+                            out.println(Protocol.buildErrorResponse("Robot not found"));
+                            continue;
+                        }
+                        java.util.List<java.util.Map<String, Object >> objects = engine.look(robot, world);
+                        StateData state = new StateData(
+                                new int[]{robot.getX(), robot.getY()},
+                                robot.getDirection().name(),
+                                robot.getShields(),
+                                robot.getShots(),
+                                robot.getStatus());
+                        out.println(Protocol.buildOkResponse(
+                                java.util.Map.of("objects", objects), state));
+
+                    }
+                    case "fire" -> {
+                        Robot robot = world.getRobot(robotName);
+                        if (robot == null){
+                            out.println(Protocol.buildErrorResponse("Robot not found"));
+                            continue;
+                        }
+                        GameEngine.FireResult result = engine.fire(robot, world);
+                        StateData state = new StateData(
+                                new int[]{robot.getX(), robot.getY()},
+                                robot.getDirection().name(),
+                                robot.getShields(),
+                                robot.getShots(),
+                                robot.getStatus());
+                        out.println(Protocol.buildOkResponse(
+                                java.util.Map.of(
+                                        "outcome", result.outcome,
+                                        "distance", result.distance,
+                                        "shotLeft", result.shotleft),
+                                state
+                        ));
                     }
                     default -> {
-                        out.println(Protocol.buildOkResponse(
-                            java.util.Map.of("message", "Command received: " + command), null));
-                            }
+                        out.println(Protocol.buildErrorResponse("Command not implemented: " + command));
+                    }
+
+
                     }
 
                 // Check if robot is dead after each command

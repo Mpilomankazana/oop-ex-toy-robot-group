@@ -88,7 +88,7 @@ public class Client {
 
                     json = "{\"robot\":\"" + robotName +
                             "\",\"command\":\"turn\"" +
-                            "\",\"arguments\":[\"" + parts[1] + "\"]}";
+                            ",\"arguments\":[\"" + parts[1] + "\"]}";
 
                     break;
                 case "fire":
