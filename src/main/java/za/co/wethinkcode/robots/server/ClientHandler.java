@@ -114,16 +114,25 @@ public class ClientHandler implements Runnable {
                     }
                     case "turn" -> {
                         Robot robot = world.getRobot(robotName);
-                        if (robot == null){
+                        if (robot == null) {
                             out.println(Protocol.buildErrorResponse("Robot not found"));
                             continue;
                         }
-                        String dir =request.getArguments()[0].toString();
+                        String dir = request.getArguments()[0].toString();
                         Direction turned = engine.turn(robot, dir);
-                        if (turned == null){
+                        if (turned == null) {
                             out.println(Protocol.buildErrorResponse("Invalid direction: " + dir));
                             continue;
                         }
+                        StateData state = new StateData(
+                                new int[]{robot.getX(), robot.getY()},
+                                robot.getDirection().name(),
+                                robot.getShields(),
+                                robot.getShots(),
+                                robot.getStatus()
+                        );
+                        out.println(Protocol.buildOkResponse("Turned " + dir, state));
+                    }
 
                     }
 
