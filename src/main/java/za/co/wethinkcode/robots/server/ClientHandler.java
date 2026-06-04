@@ -133,6 +133,21 @@ public class ClientHandler implements Runnable {
                         );
                         out.println(Protocol.buildOkResponse("Turned " + dir, state));
                     }
+                    case "look" -> {
+                        Robot robot = world.getRobot(robotName);
+                        if (robot == null) {
+                            out.println(Protocol.buildErrorResponse("Robot not found"));
+                            continue;
+                        }
+                        java.util.List<java.util.Map<String, Object >> objects = engine.look(robot, world);
+                        StateData state = new StateData(
+                                new int[]{robot.getX(), robot.getY()},
+                                robot.getDirection().name(),
+                                robot.getShields(),
+                                robot.getShots(),
+                                robot.getStatus());
+                        out.println(Protocol.buildOkResponse(
+                                java.util.Map.of("objects", objects), state));
 
                     }
 
