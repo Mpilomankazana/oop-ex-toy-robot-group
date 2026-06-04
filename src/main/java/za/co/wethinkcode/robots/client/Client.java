@@ -44,7 +44,7 @@ public class Client {
             System.out.print(robotName + "> ");
             String input = scanner.nextLine();
 
-            if(input.trim().isEmpty()) {
+            if (input.trim().isEmpty()) {
                 continue;
             }
 
@@ -53,7 +53,7 @@ public class Client {
                 break;
             }
 
-           // String json = "{\"robot\":\"" + robotName + "\",\"command\":\"" + input + "\",\"arguments\":[]}";
+            // String json = "{\"robot\":\"" + robotName + "\",\"command\":\"" + input + "\",\"arguments\":[]}";
             String[] parts = input.trim().split("\\s+");
             String command = parts[0].toLowerCase();
 
@@ -70,7 +70,7 @@ public class Client {
 
                     try {
                         Integer.parseInt(parts[1]);
-                    }catch (NumberFormatException e) {
+                    } catch (NumberFormatException e) {
                         System.out.println("Steps must be a number");
                         continue;
                     }
@@ -93,7 +93,7 @@ public class Client {
                     break;
                 case "fire":
                 case "look":
-                case"state":
+                case "state":
 
                     json = "{\"robot\":\"" + robotName +
                             "\",\"command\":\"" + command +
@@ -108,22 +108,20 @@ public class Client {
             out.println(json);
 
 
-
             String response = in.readLine();
 
             if (input.equalsIgnoreCase("look")) {
 
                 displayLookResponse(response);
-            }
-             else if (input.equalsIgnoreCase("state")) {
+            } else if (input.equalsIgnoreCase("state")) {
                 displayStateResponse(response);
 
-            } else if (command.equals("forward")
-                    || command.equals("back")
-                    || command. equals("turn")
-                    || command.equals("fire")) {
-
-                System.out.println(response);
+            } else if (command.equals("forward") || command.equals("back")) {
+                displayMovementResponse(response);
+            } else if (command.equals("turn")) {
+                displayTurnResponse(response);
+            } else if (command.equals("fire")) {
+                displayFireResponse(response);
 
             } else {
 
@@ -137,7 +135,7 @@ public class Client {
     }
 
 
-private static void displayLaunchResponse(String response) {
+    private static void displayLaunchResponse(String response) {
         try {
             JsonNode node = mapper.readTree(response);
             JsonNode state = node.get("state");
@@ -148,52 +146,118 @@ private static void displayLaunchResponse(String response) {
             } else {
                 System.out.println("Launch response: " + response);
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Launch response: " + response);
 
-            }
         }
+    }
 
-        private static void displayLookResponse(String response) {
+    private static void displayLookResponse(String response) {
         try {
             JsonNode node = mapper.readTree(response);
             JsonNode objects = node.get("data").get("objects");
             if (objects != null) {
                 System.out.println("You see");
                 for (JsonNode obj : objects) {
+                    if (!obj.get("type").asText().equals("NONE")) {
+
                         System.out.println(" " +
                                 obj.get("direction").asText() + ": " +
                                 obj.get("type").asText() + " at distance " +
                                 obj.get("distance").asInt()
                         );
                     }
-                } else {
-                    System.out.println("Nothing is visible");
+
                 }
-            }catch(Exception e ){
+                System.out.println("Nothing is visible");
+            }
+        } catch (Exception e) {
+            System.out.println(response);
+        }
+    }
+
+    private static void displayStateResponse(String response) {
+        try {
+            JsonNode node = mapper.readTree(response);
+            JsonNode state = node.get("state");
+            if (state != null) {
+                System.out.println("Robot state:");
+                System.out.println("  Position:  " + state.get("position"));
+                System.out.println("  Direction: " + state.get("direction").asText());
+                System.out.println("  Shields:   " + state.get("shields").asInt());
+                System.out.println("  Shots:     " + state.get("shots").asInt());
+                System.out.println("  Status:    " + state.get("status").asText());
+            } else {
                 System.out.println(response);
             }
+        } catch (Exception e) {
+            System.out.println(response);
         }
+    }
 
-            private static void displayStateResponse(String response) {
-                try {
-                    JsonNode node = mapper.readTree(response);
-                    JsonNode state = node.get("state");
-                    if (state != null) {
-                        System.out.println("Robot state:");
-                        System.out.println("  Position:  " + state.get("position"));
-                        System.out.println("  Direction: " + state.get("direction").asText());
-                        System.out.println("  Shields:   " + state.get("shields").asInt());
-                        System.out.println("  Shots:     " + state.get("shots").asInt());
-                        System.out.println("  Status:    " + state.get("status").asText());
-                    } else {
-                        System.out.println(response);
-                    }
-                } catch (Exception e) {
-                    System.out.println(response);
-                }
+    private static void displayMovementResponse(String response) {
+        try {
+            JsonNode node = mapper.readTree(response);
+            JsonNode state = node.get("state");
+            String message = node.get("data").asText();
+            if (state != null) {
+                System.out.println(message);
+                System.out.println(" Position: " + state.get("position"));
+                System.out.println(" Direction: " + state.get("direction").asText());
+            } else {
+                System.out.println(response);
             }
+        } catch (Exception e) {
+            System.out.println(response);
         }
+    }
+
+    private static void displayTurnResponse(String response) {
+        try {
+            JsonNode node = mapper.readTree(response);
+            JsonNode state = node.get("state");
+            if (state != null) {
+                System.out.println("Turned. Now facing: " +
+                        state.get("direction").asText());
+            } else {
+                System.out.println(response);
+            }
+        } catch (Exception e) {
+            System.out.println(response);
+        }
+    }
+
+    private static void displayFireResponse(String response) {
+        try {
+            JsonNode node = mapper.readTree(response);
+            JsonNode data = node.get("data");
+            JsonNode state = node.get("state");
+            if (data != null) {
+                String outcome = data.get("outcome").asText();
+                int shotsLeft = state.get("shots").asInt();
+                if (outcome.equals("HIT")) {
+                    System.out.println("HIT! Target struck at distance " +
+                            data.get("distance").asInt());
+                } else {
+                    System.out.println("Miss, no robot in range.");
+                }
+                System.out.println(" shots remaining: " + shotsLeft);
+            } else {
+                System.out.println(response);
+            }
+        } catch (Exception e) {
+            System.out.println(response);
+        }
+    }
+}
+
+
+
+
+
+
+
+
 
 
 
