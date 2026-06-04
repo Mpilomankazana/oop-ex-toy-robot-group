@@ -150,6 +150,27 @@ public class ClientHandler implements Runnable {
                                 java.util.Map.of("objects", objects), state));
 
                     }
+                    case "fire" -> {
+                        Robot robot = world.getRobot(robotName);
+                        if (robot == null){
+                            out.println(Protocol.buildErrorResponse("Robot not found"));
+                            continue;
+                        }
+                        GameEngine.FireResult result = engine.fire(robot, world);
+                        StateData state = new StateData(
+                                new int[]{robot.getX(), robot.getY()},
+                                robot.getDirection().name(),
+                                robot.getShields(),
+                                robot.getShots(),
+                                robot.getStatus());
+                        out.println(Protocol.buildOkResponse(
+                                java.util.Map.of(
+                                        "outcome", result.outcome,
+                                        "distance", result.distance,
+                                        "shotLeft", result.shotleft),
+                                state
+                        ));
+                    }
 
 
                     }
