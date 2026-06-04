@@ -43,7 +43,7 @@ public class ClientHandlerTest {
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(client.getInputStream()));
 
-        out.println("{\"command\":\"test\"}");
+        out.println("{\"robot\":\"HAL\",\"command\":\"launch\",\"arguments\":[\"sniper\",3,5]}");
 
         String response = in.readLine();
 
