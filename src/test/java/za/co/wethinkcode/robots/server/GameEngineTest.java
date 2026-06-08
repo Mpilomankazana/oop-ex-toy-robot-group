@@ -80,5 +80,150 @@ public class GameEngineTest {
         assertEquals(1, robot.getY());
     }
 
+    @Test
+    void shouldMoveBackWithoutChangingDirection() {
 
+        World world = new World(20, 20);
+        GameEngine engine = new GameEngine();
+
+        Robot robot = new Robot("HAL", 0, 3);
+        robot.setDirection(Direction.NORTH);
+
+        engine.moveBack(robot, 2, world);
+
+        assertEquals(Direction.NORTH, robot.getDirection());
+    }
+
+    @Test
+    void shouldTurnRight() {
+
+        GameEngine engine = new GameEngine();
+
+        Robot robot = new Robot("HAL");
+
+        Direction result = engine.turn(robot, "right");
+
+        assertEquals(Direction.EAST, result);
+    }
+
+    @Test
+    void shouldTurnLeft() {
+
+        GameEngine engine = new GameEngine();
+
+        Robot robot = new Robot("HAL");
+
+        Direction result = engine.turn(robot, "left");
+
+        assertEquals(Direction.WEST, result);
+    }
+
+    @Test
+    void shouldReturnNullForInvalidTurnDirection() {
+
+        GameEngine engine = new GameEngine();
+
+        Robot robot = new Robot("HAL");
+
+        Direction result = engine.turn(robot, "spin");
+
+        assertNull(result);
+    }
+
+    @Test
+    void shouldHitRobotInRange() {
+
+        World world = new World(20, 20);
+        GameEngine engine = new GameEngine();
+
+        Robot shooter = new Robot("HAL", 0, 0);
+        shooter.setDirection(Direction.NORTH);
+
+        Robot target = new Robot("EVA", 0, 3);
+
+        world.addRobot(shooter);
+        world.addRobot(target);
+
+        GameEngine.FireResult result = engine.fire(shooter, world);
+
+        assertEquals("HIT", result.outcome);
+    }
+
+    @Test
+    void shouldMissWhenNoRobotInRange() {
+
+        World world = new World(20, 20);
+        GameEngine engine = new GameEngine();
+
+        Robot shooter = new Robot("HAL", 0, 0);
+        shooter.setDirection(Direction.NORTH);
+
+        world.addRobot(shooter);
+
+        GameEngine.FireResult result = engine.fire(shooter, world);
+
+        assertEquals("MISS", result.outcome);
+    }
+
+    @Test
+    void shouldDecreaseShotsAfterFire() {
+
+        World world = new World(20, 20);
+        GameEngine engine = new GameEngine();
+
+        Robot shooter = new Robot("HAL", 0, 0);
+
+        int before = shooter.getShots();
+
+        engine.fire(shooter, world);
+
+        assertEquals(before - 1, shooter.getShots());
+    }
+
+    @Test
+    void shouldDetectObstacleInLook() {
+
+        World world = new World(20, 20);
+        world.addObstacle(0, 3);
+
+        GameEngine engine = new GameEngine();
+
+        Robot robot = new Robot("HAL", 0, 0);
+
+        List<Map<String, Object>> result = engine.look(robot, world);
+
+        assertTrue(result.stream().anyMatch(item -> item.get("type").equals("OBSTACLE")));
+    }
+
+    @Test
+    void shouldDetectRobotInLook() {
+
+        World world = new World(20, 20);
+
+        Robot robot = new Robot("HAL", 0, 0);
+        Robot enemy = new Robot("EVA", 0, 2);
+
+        world.addRobot(robot);
+        world.addRobot(enemy);
+
+        GameEngine engine = new GameEngine();
+
+        List<Map<String, Object>> result = engine.look(robot, world);
+
+        assertTrue(result.stream().anyMatch(item -> item.get("type").equals("ROBOT")));
+
+    }
+
+    @Test
+    void shouldRejectDuplicateRobotNames() {
+
+        World world = new World(20, 20);
+        GameEngine engine = new GameEngine();
+
+        Robot first = engine.launch("HAL", world);
+        Robot second = engine.launch("HAL", world);
+
+        assertNotNull(first);
+        assertNotNull(second);
+    }
 }
