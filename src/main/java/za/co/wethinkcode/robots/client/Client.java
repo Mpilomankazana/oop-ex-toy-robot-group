@@ -7,6 +7,10 @@ import za.co.wethinkcode.robots.protocol.Protocol;
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
+//adding two imports to store multiple robots names
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Client {
 
@@ -31,18 +35,41 @@ public class Client {
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
         Scanner scanner = new Scanner(System.in);
 
-        System.out.print("Enter robot name: ");
-        String robotName = scanner.nextLine();
+        //launching more than one robot
+        System.out.println("How many robots do you want to launch ? ");
+        int numRobots = Integer.parseInt(scanner.nextLine());
 
-        String launchJson = "{\"robot\":\"" + robotName + "\",\"command\":\"launch\",\"arguments\":[\"sniper\",5,5]}";
-        out.println(launchJson);
-        String launchResponse = in.readLine();
+        //store all robot names
+        List<String> robotNames = new ArrayList<>();
 
-        displayLaunchResponse(launchResponse);
+        //Launch each robot one by one
+
+        for (int i = 0; i < numRobots; i++) {
+            System.out.print("Enter robot name" + (i +1) + ": ");
+            String robotName = scanner.nextLine();
+            robotNames.add(robotName);
+
+            String launchJson = "{\"robot\":\"" + robotName + "\",\"command\":\"launch\",\"arguments\":[\"sniper\",5,5]}";
+            out.println(launchJson);
+            String launchResponse = in.readLine();
+            displayLaunchResponse(launchResponse);
+        }
+
 
         while (true) {
-            System.out.print(robotName + "> ");
+
+            //ask which robot to control
+            System.out.print("which robot do you want to control ?(" + String.join("/", robotNames) + "): ");
+            String robotName = scanner.nextLine();
+            //
+            if (!robotNames.contains(robotName)) {
+                System.out.println("Unknown robot. choose from: " + robotNames);
+                continue;
+            }
+
+            System.out.print(robotName + ">");
             String input = scanner.nextLine();
+
 
             if (input.trim().isEmpty()) {
                 continue;
