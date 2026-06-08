@@ -103,7 +103,11 @@ public class GameEngine {
             Robot target = world.getRobotAt(tx, ty);
             if (target != null) {
                 target.setShields(target.getShields() - 1);
-                if (target.getShields() <= 0) target.setStatus("DEAD");
+                if (target.getShields() <= 0) {
+                    target.setStatus("DEAD");
+                    world.removeRobot(target.getName());
+                    return new FireResult("KILL", dist,shooter.getShots());
+                }
                 return new FireResult("HIT", dist, shooter.getShots());
             }
 
