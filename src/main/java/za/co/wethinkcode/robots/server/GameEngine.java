@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class GameEngine {
 
@@ -102,7 +103,11 @@ public class GameEngine {
             Robot target = world.getRobotAt(tx, ty);
             if (target != null) {
                 target.setShields(target.getShields() - 1);
-                if (target.getShields() <= 0) target.setStatus("DEAD");
+                if (target.getShields() <= 0) {
+                    target.setStatus("DEAD");
+                    world.removeRobot(target.getName());
+                    return new FireResult("KILL", dist,shooter.getShots());
+                }
                 return new FireResult("HIT", dist, shooter.getShots());
             }
 
@@ -174,6 +179,24 @@ public class GameEngine {
             this.distance = distance;
             this.shotleft = shotleft;
         }
+    }
+
+    public Robot launch(String name, World world){
+       Random random = new Random();
+       int halfWidth = world.getWidth() / 2;
+       int halfHeight = world.getHeight() / 2;
+       int x, y;
+       int attempts = 0;
+
+       do{
+           x = random.nextInt(world.getWidth()) - halfWidth;
+           y = random.nextInt(world.getHeight()) - halfHeight;
+           attempts++;
+           if (attempts > 1000) return null;
+       } while (world.isBlocked(x,y));
+       Robot robot = new Robot(name , x ,y);
+       world.addRobot(robot);
+       return robot;
     }
 
 }

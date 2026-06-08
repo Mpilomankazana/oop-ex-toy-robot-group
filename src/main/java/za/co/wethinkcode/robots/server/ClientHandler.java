@@ -48,8 +48,12 @@ public class ClientHandler implements Runnable {
 
                 switch (command.toLowerCase()) {
                     case "launch" -> {
-                        Robot robot = new Robot(robotName);
-                        world.addRobot(robot);
+                        Robot robot = engine.launch(robotName,world);
+                        if (robot == null){
+                            out.println(Protocol.buildErrorResponse("No space in world"));
+                            continue;
+                        }
+
                         StateData state = new StateData(
                             new int[]{robot.getX(), robot.getY()},
                             robot.getDirection().name(),
