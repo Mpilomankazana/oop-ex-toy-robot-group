@@ -269,4 +269,46 @@ public class GameEngineTest {
         assertEquals(2, moved);
         assertEquals(2, hal.getY());
     }
+
+    @Test
+    void shouldKillRobotWhenShieldsReachZero() {
+
+        World world = new World(20, 20);
+        GameEngine engine = new GameEngine();
+
+        Robot shooter = new Robot("HAL", 0, 0);
+        shooter.setDirection(Direction.NORTH);
+
+        Robot target = new Robot("EVA", 0, 2);
+        target.setShields(1);
+
+        world.addRobot(shooter);
+        world.addRobot(target);
+
+        GameEngine.FireResult result = engine.fire(shooter, world);
+
+        assertEquals("KILL", result.outcome);
+        assertEquals("DEAD", target.getStatus());
+        assertNull(world.getRobot("EVA"));
+    }
+
+    @Test
+    void shouldRespectVisibilityRange() {
+
+        World world = new World(20, 20);
+
+        // Obstacle beyond visibility range
+        world.addObstacle(0, 10);
+
+        Robot robot = new Robot("HAL", 0, 0);
+        world.addRobot(robot);
+
+        GameEngine engine = new GameEngine();
+
+        List<Map<String, Object>> result = engine.look(robot, world);
+
+        boolean obstacleSeen = result.stream()
+                .anyMatch(item -> item.get("type").equals("OBSTACLE")
+                        && ((Integer) item.get("distance")) == 10);
+    }
 }
