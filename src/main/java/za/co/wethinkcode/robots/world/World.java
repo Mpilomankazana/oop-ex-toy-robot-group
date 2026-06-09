@@ -24,6 +24,9 @@ public class World {
         this.width              = width;
         this.height             = height;
         this.visibility         = 5;
+        this.repairTime         = 5;
+        this.reloadTime         = 5;
+        this.maxShields         = 3;
         this.robots             = new ArrayList<>();
         this.obstaclePositions  = new HashSet<>();
     }
