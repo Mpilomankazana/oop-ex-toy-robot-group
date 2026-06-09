@@ -42,6 +42,9 @@ public class World {
         this.width      = Integer.parseInt(config.getProperty("world.width"));
         this.height     = Integer.parseInt(config.getProperty("world.height"));
         this.visibility = Integer.parseInt(config.getProperty("visibility"));
+        this.repairTime = Integer.parseInt(config.getProperty("repair.time", "5"));
+        this.reloadTime = Integer.parseInt(config.getProperty("reload.time", "5"));
+        this.maxShields = Integer.parseInt(config.getProperty("max.shields", "3"));
         this.robots             = new ArrayList<>();
         this.obstaclePositions  = new HashSet<>();
         loadObstacles(config);
