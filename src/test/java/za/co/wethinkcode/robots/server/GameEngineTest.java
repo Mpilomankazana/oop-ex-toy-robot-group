@@ -194,6 +194,7 @@ public class GameEngineTest {
         GameEngine engine = new GameEngine();
 
         Robot robot = new Robot("HAL", 0, 0);
+        world.addRobot(robot);
 
         List<Map<String, Object>> result = engine.look(robot, world);
 
@@ -230,5 +231,42 @@ public class GameEngineTest {
 
         assertNotNull(first);
         assertNotNull(second);
+    }
+
+    @Test
+    void shouldStopAtWorldEdge() {
+
+        World world = new World(5, 5);
+        GameEngine engine = new GameEngine();
+
+        Robot robot = new Robot("HAL", 0, 2);
+        robot.setDirection(Direction.NORTH);
+
+        world.addRobot(robot);
+
+        int moved = engine.moveForward(robot, 10, world);
+
+        assertTrue(moved < 10);
+        assertTrue(world.isInsideWorld(robot.getX(), robot.getY()));
+    }
+
+    @Test
+    void shouldStopAtAnotherRobot() {
+
+        World world = new World(20, 20);
+        GameEngine engine = new GameEngine();
+
+        Robot hal = new Robot("HAL", 0, 0);
+        hal.setDirection(Direction.NORTH);
+
+        Robot eva = new Robot("EVA", 0, 3);
+
+        world.addRobot(hal);
+        world.addRobot(eva);
+
+        int moved = engine.moveForward(hal, 10, world);
+
+        assertEquals(2, moved);
+        assertEquals(2, hal.getY());
     }
 }
