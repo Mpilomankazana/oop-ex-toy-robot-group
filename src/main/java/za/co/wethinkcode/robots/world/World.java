@@ -20,16 +20,17 @@ public class World {
     private final Set<String> obstaclePositions;
 
 
-    public World(int width, int height) {
-        this.width              = width;
-        this.height             = height;
-        this.visibility         = 5;
-        this.repairTime         = 5;
-        this.reloadTime         = 5;
-        this.maxShields         = 3;
-        this.robots             = new ArrayList<>();
-        this.obstaclePositions  = new HashSet<>();
-    }
+public World(int width, int height){
+    this.width = width;
+    this.height = height;
+    this.visibility = 5;
+    this.repairTime = 5;
+    this.reloadTime = 5;
+    this.maxShields = 3;
+    this.robots = new ArrayList<>();
+    this.obstaclePositions = new HashSet<>();
+
+}
     /**
      * Creates a World loaded from a config.properties file.
      * Reads world size, visibility, and obstacle positions from the file.
@@ -67,7 +68,13 @@ public class World {
      * Returns the visibility range — how many steps a robot can see.
      * @return visibility in steps
      */
-    public int getVisibility() { return visibility; }
+    public int getVisibility() { return visibility;}
+
+    /**
+     * Returns the repair time in seconds - how long repair blocks movement.
+     * @return repair time in seconds
+     */
+    public int getRepairTime() { return repairTime; }
 
     /**
      * Returns the robot at the given position, or null if the position is empty.
@@ -75,12 +82,7 @@ public class World {
      * @param y y-coordinate to check
      * @return the Robot at (x,y) or null
      */
-    public synchronized Robot getRobotAt(int x, int y) {
-        for (Robot r : robots) {
-            if (r.getX() == x && r.getY() == y) return r;
-        }
-        return null;
-    }
+
 
     /**
      * Updates a robot's stored position after movement.
