@@ -80,6 +80,11 @@ public World(int width, int height){
      * @return reload time in seconds
      */
     public int getReloadTime() { return reloadTime; }
+    /**
+     * Returns the maximum shield strength a robot can have.
+     * @return maximum shield strength
+     */
+    public int getMaxShields() { return maxShields; }
 
     /**
      * Returns the robot at the given position, or null if the position is empty.
