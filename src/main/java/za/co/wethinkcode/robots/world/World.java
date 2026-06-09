@@ -136,6 +136,18 @@ public World(int width, int height){
 
         robots.removeIf(r -> r.getName().equals(name));
     }
+    /**
+    * Returns the robot at the given position, or null if the position is empty.
+    * @param x x-coordinate to check
+    * @param y y-coordinate to check
+    * @return the Robot at (x,y) or null
+    */
+    public synchronized Robot getRobotAt(int x, int y) {
+      for (Robot r : robots) {
+          if (r.getX() == x && r.getY() == y) return r;
+      }
+      return null;
+   } 
 
 
     public synchronized Robot getRobot(String name) {
