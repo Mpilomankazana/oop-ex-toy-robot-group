@@ -60,6 +60,7 @@ public class GameEngineTest {
         GameEngine engine = new GameEngine();
 
         Robot robot = new Robot("HAL", 0, 0);
+        world.addRobot(robot);
 
         int moved = engine.moveForward(robot, 10, world);
 
