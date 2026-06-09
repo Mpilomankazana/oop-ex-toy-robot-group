@@ -75,6 +75,11 @@ public World(int width, int height){
      * @return repair time in seconds
      */
     public int getRepairTime() { return repairTime; }
+     /**
+     * Returns the reload time in seconds — how long reload blocks movement.
+     * @return reload time in seconds
+     */
+    public int getReloadTime() { return reloadTime; }
 
     /**
      * Returns the robot at the given position, or null if the position is empty.
