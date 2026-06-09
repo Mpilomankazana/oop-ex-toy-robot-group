@@ -75,6 +75,8 @@ public class GameEngineTest {
         GameEngine engine = new GameEngine();
 
         Robot robot = new Robot("HAL", 0, 3);
+        robot.setDirection(Direction.NORTH);
+        world.addRobot(robot);
 
         int moved = engine.moveBack(robot, 2, world);
 
