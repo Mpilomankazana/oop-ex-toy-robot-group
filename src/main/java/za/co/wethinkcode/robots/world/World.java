@@ -12,17 +12,25 @@ public class World {
     private final int width;
     private final int height;
     private int visibility;
+    private int repairTime;
+    private int reloadTime;
+    private int maxShields;
+
     private final List<Robot> robots;
     private final Set<String> obstaclePositions;
 
 
-    public World(int width, int height) {
-        this.width              = width;
-        this.height             = height;
-        this.visibility         = 5;
-        this.robots             = new ArrayList<>();
-        this.obstaclePositions  = new HashSet<>();
-    }
+public World(int width, int height){
+    this.width = width;
+    this.height = height;
+    this.visibility = 5;
+    this.repairTime = 5;
+    this.reloadTime = 5;
+    this.maxShields = 3;
+    this.robots = new ArrayList<>();
+    this.obstaclePositions = new HashSet<>();
+
+}
     /**
      * Creates a World loaded from a config.properties file.
      * Reads world size, visibility, and obstacle positions from the file.
@@ -35,6 +43,9 @@ public class World {
         this.width      = Integer.parseInt(config.getProperty("world.width"));
         this.height     = Integer.parseInt(config.getProperty("world.height"));
         this.visibility = Integer.parseInt(config.getProperty("visibility"));
+        this.repairTime = Integer.parseInt(config.getProperty("repair.time", "5"));
+        this.reloadTime = Integer.parseInt(config.getProperty("reload.time", "5"));
+        this.maxShields = Integer.parseInt(config.getProperty("max.shields", "3"));
         this.robots             = new ArrayList<>();
         this.obstaclePositions  = new HashSet<>();
         loadObstacles(config);
@@ -57,7 +68,23 @@ public class World {
      * Returns the visibility range — how many steps a robot can see.
      * @return visibility in steps
      */
-    public int getVisibility() { return visibility; }
+    public int getVisibility() { return visibility;}
+
+    /**
+     * Returns the repair time in seconds - how long repair blocks movement.
+     * @return repair time in seconds
+     */
+    public int getRepairTime() { return repairTime; }
+     /**
+     * Returns the reload time in seconds — how long reload blocks movement.
+     * @return reload time in seconds
+     */
+    public int getReloadTime() { return reloadTime; }
+    /**
+     * Returns the maximum shield strength a robot can have.
+     * @return maximum shield strength
+     */
+    public int getMaxShields() { return maxShields; }
 
     /**
      * Returns the robot at the given position, or null if the position is empty.
@@ -65,12 +92,7 @@ public class World {
      * @param y y-coordinate to check
      * @return the Robot at (x,y) or null
      */
-    public synchronized Robot getRobotAt(int x, int y) {
-        for (Robot r : robots) {
-            if (r.getX() == x && r.getY() == y) return r;
-        }
-        return null;
-    }
+
 
     /**
      * Updates a robot's stored position after movement.
@@ -124,6 +146,18 @@ public class World {
 
         robots.removeIf(r -> r.getName().equals(name));
     }
+    /**
+    * Returns the robot at the given position, or null if the position is empty.
+    * @param x x-coordinate to check
+    * @param y y-coordinate to check
+    * @return the Robot at (x,y) or null
+    */
+    public synchronized Robot getRobotAt(int x, int y) {
+      for (Robot r : robots) {
+          if (r.getX() == x && r.getY() == y) return r;
+      }
+      return null;
+   } 
 
 
     public synchronized Robot getRobot(String name) {
