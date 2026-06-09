@@ -12,6 +12,10 @@ public class World {
     private final int width;
     private final int height;
     private int visibility;
+    private int repairTime;
+    private int reloadTime;
+    private int maxShields;
+
     private final List<Robot> robots;
     private final Set<String> obstaclePositions;
 
