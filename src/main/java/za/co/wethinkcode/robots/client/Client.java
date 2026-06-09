@@ -45,7 +45,7 @@ public class Client {
         //Launch each robot one by one
 
         for (int i = 0; i < numRobots; i++) {
-            System.out.print("Enter robot name" + (i +1) + ": ");
+            System.out.print("Enter robot name" + (i + 1) + ": ");
             String robotName = scanner.nextLine();
             robotNames.add(robotName);
 
@@ -185,6 +185,7 @@ public class Client {
             JsonNode objects = node.get("data").get("objects");
             if (objects != null) {
                 System.out.println("You see");
+                boolean sawSomething = false;
                 for (JsonNode obj : objects) {
                     if (!obj.get("type").asText().equals("NONE")) {
 
@@ -193,15 +194,19 @@ public class Client {
                                 obj.get("type").asText() + " at distance " +
                                 obj.get("distance").asInt()
                         );
+                        sawSomething = true;
                     }
-
                 }
-                System.out.println("Nothing is visible");
+                if (!sawSomething) {
+                    System.out.println("Nothing is visible ");
+                }
             }
         } catch (Exception e) {
-            System.out.println(response);
+            System.out.println("unexpected response from java");
         }
     }
+
+
 
     private static void displayStateResponse(String response) {
         try {
