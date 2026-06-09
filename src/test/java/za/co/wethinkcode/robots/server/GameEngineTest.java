@@ -92,6 +92,7 @@ public class GameEngineTest {
 
         Robot robot = new Robot("HAL", 0, 3);
         robot.setDirection(Direction.NORTH);
+        world.addRobot(robot);
 
         engine.moveBack(robot, 2, world);
 
