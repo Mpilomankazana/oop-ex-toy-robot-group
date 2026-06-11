@@ -175,6 +175,31 @@ public class ClientHandler implements Runnable {
                                 state
                         ));
                     }
+
+                    case "repair" -> {
+                        Robot robot = world.getRobot(robotName);
+                        if (robot == null){
+                            out.println(Protocol.buildErrorResponse("Robot not found"));
+                            continue;
+                        }
+                        robot.setStatus("REPAIR");
+                        try{
+                            Thread.sleep(world.getRepairTime() * 1000L);
+                        } catch (InterruptedException e){
+                            Thread.currentThread().interrupt();
+                        }
+                        robot.setShields(world.getMaxShields());
+                        robot.setStatus("NORMAL");
+                        StateData state = new StateData(
+                                new int[]{robot.getX(), robot.getY()},
+                                robot.getDirection().name(),
+                                robot.getShields(),
+                                robot.getShots(),
+                                robot.getStatus()
+
+                        );
+                        out.println(Protocol.buildOkResponse("Shields repaired",state));
+                    }
                     default -> {
                         out.println(Protocol.buildErrorResponse("Command not implemented: " + command));
                     }
