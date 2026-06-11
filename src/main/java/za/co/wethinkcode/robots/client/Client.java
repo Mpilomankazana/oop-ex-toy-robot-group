@@ -146,13 +146,17 @@ public class Client {
 
             } else if (command.equals("forward") || command.equals("back")) {
                 displayMovementResponse(response);
+                
             } else if (command.equals("turn")) {
                 displayTurnResponse(response);
+
             } else if (command.equals("fire")) {
                 displayFireResponse(response);
 
-            } else {
+            }else if (command.equals("repair")) {
+                displayRepairResponse(response);
 
+            } else {
                 System.out.println(response);
             }
 
