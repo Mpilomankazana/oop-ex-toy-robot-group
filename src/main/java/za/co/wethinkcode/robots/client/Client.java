@@ -121,7 +121,7 @@ public class Client {
                 case "fire":
                 case "look":
                 case "state":
-                case"repair":
+                case "repair":
 
                     json = "{\"robot\":\"" + robotName +
                             "\",\"command\":\"" + command +
@@ -146,14 +146,14 @@ public class Client {
 
             } else if (command.equals("forward") || command.equals("back")) {
                 displayMovementResponse(response);
-                
+
             } else if (command.equals("turn")) {
                 displayTurnResponse(response);
 
             } else if (command.equals("fire")) {
                 displayFireResponse(response);
 
-            }else if (command.equals("repair")) {
+            } else if (command.equals("repair")) {
                 displayRepairResponse(response);
 
             } else {
@@ -210,7 +210,6 @@ public class Client {
             System.out.println("unexpected response from java");
         }
     }
-
 
 
     private static void displayStateResponse(String response) {
@@ -279,6 +278,21 @@ public class Client {
                     System.out.println("Miss, no robot in range.");
                 }
                 System.out.println(" shots remaining: " + shotsLeft);
+            } else {
+                System.out.println(response);
+            }
+        } catch (Exception e) {
+            System.out.println(response);
+        }
+    }
+
+    private static void displayRepairResponse(String response) {
+        try {
+            JsonNode node = mapper.readTree(response);
+            JsonNode state = node.get("state");
+            if (state != null) {
+                System.out.println("Robot repaired");
+                System.out.println(" Shields: " + state.get("shields").asInt());
             } else {
                 System.out.println(response);
             }
