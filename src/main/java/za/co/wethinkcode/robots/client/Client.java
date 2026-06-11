@@ -158,7 +158,7 @@ public class Client {
                 displayRepairResponse(response);
 
             } else if (  command.equals("reload")) {
-                displayReloadhResponse(response);
+                displayReloadResponse(response);
 
             } else {
                 System.out.println(response);
@@ -297,6 +297,22 @@ public class Client {
             if (state != null) {
                 System.out.println("Robot repaired");
                 System.out.println(" Shields: " + state.get("shields").asInt());
+            } else {
+                System.out.println(response);
+            }
+        } catch (Exception e) {
+            System.out.println(response);
+        }
+    }
+
+    private static void displayReloadResponse(String response) {
+        try {
+            JsonNode node = mapper.readTree(response);
+            JsonNode state = node.get("state");
+            if (state != null) {
+                System.out.println("Robot reloaded!");
+                System.out.println(" shots: " + state.get("shots").asInt());
+
             } else {
                 System.out.println(response);
             }
