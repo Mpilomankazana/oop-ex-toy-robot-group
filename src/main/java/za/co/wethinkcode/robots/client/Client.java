@@ -121,6 +121,7 @@ public class Client {
                 case "fire":
                 case "look":
                 case "state":
+                case"repair":
 
                     json = "{\"robot\":\"" + robotName +
                             "\",\"command\":\"" + command +
