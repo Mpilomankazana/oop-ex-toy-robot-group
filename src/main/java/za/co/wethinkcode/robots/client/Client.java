@@ -226,7 +226,12 @@ public class Client {
                 System.out.println("  Direction: " + state.get("direction").asText());
                 System.out.println("  Shields:   " + state.get("shields").asInt());
                 System.out.println("  Shots:     " + state.get("shots").asInt());
-                System.out.println("  Status:    " + state.get("status").asText());
+
+                String status = state.get("status").asText();
+                System.out.println(" Status: " + status);
+                if (status.equals("DEAD")) {
+                    System.out.println("Your robot is DEAD!");
+                }
             } else {
                 System.out.println(response);
             }
