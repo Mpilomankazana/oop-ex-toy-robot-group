@@ -157,6 +157,9 @@ public class Client {
             } else if (command.equals("repair")) {
                 displayRepairResponse(response);
 
+            } else if (  command.equals("reload")) {
+                displayReloadhResponse(response);
+
             } else {
                 System.out.println(response);
             }
