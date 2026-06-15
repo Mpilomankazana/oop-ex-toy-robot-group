@@ -14,6 +14,12 @@ import za.co.wethinkcode.robots.robot.Direction;
 import za.co.wethinkcode.robots.robot.Robot;
 import za.co.wethinkcode.robots.world.World;
 
+/**
+ * Handles communication with a single connected robot client.
+ * Runs in its own thread — one instance per connected robot.
+ * Reads JSON commands from the client, processes them using the
+ * GameEngine and World, and sends JSON responses back.
+ */
 public class ClientHandler implements Runnable {
 
     private final Socket socket;
