@@ -101,6 +101,13 @@ public class Server {
             e.printStackTrace();
         }
     }
+/**
+ * Entry point for the server program.
+ * Loads world from config.properties if available,
+ * otherwise falls back to a default 10x10 world.
+ * @param args command line arguments (not used)
+ * @throws Exception if server socket cannot be opened
+ */
 
     public static void main(String[] args) throws Exception {
         World loadedWorld;
