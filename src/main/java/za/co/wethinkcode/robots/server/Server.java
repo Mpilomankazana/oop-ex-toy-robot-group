@@ -25,6 +25,12 @@ public class Server {
         this.world = world;
     }
 
+/**
+ * Starts the server — opens port 5000, starts the console thread,
+ * and accepts incoming client connections in a loop.
+ * Each connection spawns a new ClientHandler thread.
+ */
+
     public void start() {
         try {
             serverSocket = new ServerSocket(5000);
