@@ -88,7 +88,10 @@ public class Server {
             System.out.println("Server stopped.");
         }
     }
-
+/**
+ * Stops the server by closing the ServerSocket.
+ * Any active client connections will be terminated.
+ */
     public void stop() {
         try {
             if (serverSocket != null && !serverSocket.isClosed()) {
