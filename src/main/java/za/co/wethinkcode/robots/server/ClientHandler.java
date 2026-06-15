@@ -1,17 +1,25 @@
 package za.co.wethinkcode.robots.server;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+
+import za.co.wethinkcode.robots.command.CommandProcessor;
 import za.co.wethinkcode.robots.protocol.Protocol;
 import za.co.wethinkcode.robots.protocol.Request;
 import za.co.wethinkcode.robots.protocol.StateData;
+import za.co.wethinkcode.robots.robot.Direction;
 import za.co.wethinkcode.robots.robot.Robot;
 import za.co.wethinkcode.robots.world.World;
-import za.co.wethinkcode.robots.world.MovementResults;
-import za.co.wethinkcode.robots.command.CommandProcessor;
-import za.co.wethinkcode.robots.robot.Direction;
 
-import java.io.*;
-import java.net.Socket;
-
+/**
+ * Handles communication with a single connected robot client. Runs in its own
+ * thread — one instance per connected robot. Reads JSON commands from the
+ * client, processes them using the GameEngine and World, and sends JSON
+ * responses back.
+ */
 public class ClientHandler implements Runnable {
 
     private final Socket socket;
@@ -20,19 +28,29 @@ public class ClientHandler implements Runnable {
     private final CommandProcessor processor = new CommandProcessor();
     private final GameEngine engine = new GameEngine();
 
+    /**
+     * Creates a new ClientHandler for the given socket and world.
+     *
+     * @param socket the client's socket connection
+     * @param world the shared world instance
+     */
     public ClientHandler(Socket socket, World world) {
         this.socket = socket;
         this.world = world;
     }
 
+    /**
+     * Main loop — reads JSON commands from the client and sends responses.
+     * Handles: launch, state, forward, back, turn, look, fire, repair, reload.
+     * Runs until the client disconnects or the robot dies. On disconnect,
+     * removes the robot from the world and closes the socket.
+     */
     @Override
     public void run() {
         try (
-            BufferedReader in = new BufferedReader(
-                new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(
-                socket.getOutputStream(), true)
-        ) {
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(socket.getInputStream())); PrintWriter out = new PrintWriter(
+                        socket.getOutputStream(), true)) {
             String line;
             while ((line = in.readLine()) != null) {
                 System.out.println("Received: " + line);
@@ -48,18 +66,18 @@ public class ClientHandler implements Runnable {
 
                 switch (command.toLowerCase()) {
                     case "launch" -> {
-                        Robot robot = engine.launch(robotName,world);
-                        if (robot == null){
+                        Robot robot = engine.launch(robotName, world);
+                        if (robot == null) {
                             out.println(Protocol.buildErrorResponse("No space in world"));
                             continue;
                         }
 
                         StateData state = new StateData(
-                            new int[]{robot.getX(), robot.getY()},
-                            robot.getDirection().name(),
-                            robot.getShields(),
-                            robot.getShots(),
-                            robot.getStatus()
+                                new int[]{robot.getX(), robot.getY()},
+                                robot.getDirection().name(),
+                                robot.getShields(),
+                                robot.getShots(),
+                                robot.getStatus()
                         );
                         out.println(Protocol.buildOkResponse("Launched", state));
                     }
@@ -70,11 +88,11 @@ public class ClientHandler implements Runnable {
                             continue;
                         }
                         StateData state = new StateData(
-                            new int[]{robot.getX(), robot.getY()},
-                            robot.getDirection().name(),
-                            robot.getShields(),
-                            robot.getShots(),
-                            robot.getStatus()
+                                new int[]{robot.getX(), robot.getY()},
+                                robot.getDirection().name(),
+                                robot.getShields(),
+                                robot.getShots(),
+                                robot.getStatus()
                         );
                         out.println(Protocol.buildOkResponse("State", state));
                     }
@@ -85,17 +103,17 @@ public class ClientHandler implements Runnable {
                             continue;
                         }
                         int steps = Integer.parseInt(
-                            request.getArguments()[0].toString());
+                                request.getArguments()[0].toString());
                         int moved = engine.moveForward(robot, steps, world);
                         StateData state = new StateData(
-                            new int[]{robot.getX(), robot.getY()},
-                            robot.getDirection().name(),
-                            robot.getShields(),
-                            robot.getShots(),
-                            robot.getStatus()
+                                new int[]{robot.getX(), robot.getY()},
+                                robot.getDirection().name(),
+                                robot.getShields(),
+                                robot.getShots(),
+                                robot.getStatus()
                         );
                         out.println(Protocol.buildOkResponse(
-                            "Moved " + moved + " step(s)", state));
+                                "Moved " + moved + " step(s)", state));
                     }
                     case "back" -> {
                         Robot robot = world.getRobot(robotName);
@@ -104,17 +122,17 @@ public class ClientHandler implements Runnable {
                             continue;
                         }
                         int steps = Integer.parseInt(
-                            request.getArguments()[0].toString());
+                                request.getArguments()[0].toString());
                         int moved = engine.moveBack(robot, steps, world);
                         StateData state = new StateData(
-                            new int[]{robot.getX(), robot.getY()},
-                            robot.getDirection().name(),
-                            robot.getShields(),
-                            robot.getShots(),
-                            robot.getStatus()
+                                new int[]{robot.getX(), robot.getY()},
+                                robot.getDirection().name(),
+                                robot.getShields(),
+                                robot.getShots(),
+                                robot.getStatus()
                         );
                         out.println(Protocol.buildOkResponse(
-                            "Moved back " + moved + " step(s)", state));
+                                "Moved back " + moved + " step(s)", state));
                     }
                     case "turn" -> {
                         Robot robot = world.getRobot(robotName);
@@ -143,7 +161,7 @@ public class ClientHandler implements Runnable {
                             out.println(Protocol.buildErrorResponse("Robot not found"));
                             continue;
                         }
-                        java.util.List<java.util.Map<String, Object >> objects = engine.look(robot, world);
+                        java.util.List<java.util.Map<String, Object>> objects = engine.look(robot, world);
                         StateData state = new StateData(
                                 new int[]{robot.getX(), robot.getY()},
                                 robot.getDirection().name(),
@@ -156,7 +174,7 @@ public class ClientHandler implements Runnable {
                     }
                     case "fire" -> {
                         Robot robot = world.getRobot(robotName);
-                        if (robot == null){
+                        if (robot == null) {
                             out.println(Protocol.buildErrorResponse("Robot not found"));
                             continue;
                         }
@@ -178,14 +196,14 @@ public class ClientHandler implements Runnable {
 
                     case "repair" -> {
                         Robot robot = world.getRobot(robotName);
-                        if (robot == null){
+                        if (robot == null) {
                             out.println(Protocol.buildErrorResponse("Robot not found"));
                             continue;
                         }
                         robot.setStatus("REPAIR");
-                        try{
+                        try {
                             Thread.sleep(world.getRepairTime() * 1000L);
-                        } catch (InterruptedException e){
+                        } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
                         }
                         robot.setShields(world.getMaxShields());
@@ -196,16 +214,51 @@ public class ClientHandler implements Runnable {
                                 robot.getShields(),
                                 robot.getShots(),
                                 robot.getStatus()
-
                         );
-                        out.println(Protocol.buildOkResponse("Shields repaired",state));
+                        out.println(Protocol.buildOkResponse("Shields repaired", state));
                     }
+                    /**
+                     * Handles the reload command. Blocks the robot for the
+                     * configured reload time, then restores shots to maximum
+                     * and sets status to NORMAL.
+                     */
+                    case "reload" -> {
+                        Robot robot = world.getRobot(robotName);
+                        if (robot == null) {
+                            out.println(Protocol.buildErrorResponse("Robot not found"));
+                            continue;
+                        }
+                        robot.setStatus("RELOAD");
+                        StateData reloadingState = new StateData(
+                                new int[]{robot.getX(), robot.getY()},
+                                robot.getDirection().name(),
+                                robot.getShields(),
+                                robot.getShots(),
+                                robot.getStatus()
+                        );
+                        out.println(Protocol.buildOkResponse("Reloading...", reloadingState));
+                        try {
+                            Thread.sleep(world.getReloadTime() * 1000L);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                        robot.setShots(world.getMaxShields());
+                        robot.setStatus("NORMAL");
+                        StateData doneState = new StateData(
+                                new int[]{robot.getX(), robot.getY()},
+                                robot.getDirection().name(),
+                                robot.getShields(),
+                                robot.getShots(),
+                                robot.getStatus()
+                        );
+                        out.println(Protocol.buildOkResponse("Reloaded", doneState));
+                    }
+
                     default -> {
                         out.println(Protocol.buildErrorResponse("Command not implemented: " + command));
                     }
 
-
-                    }
+                }
 
                 // Check if robot is dead after each command
                 if (robotName != null) {
@@ -220,8 +273,14 @@ public class ClientHandler implements Runnable {
         } catch (IOException e) {
             System.out.println("Client disconnected: " + e.getMessage());
         } finally {
-            if (robotName != null) world.removeRobot(robotName);
-            try { socket.close(); } catch (IOException e) { e.printStackTrace(); }
+            if (robotName != null) {
+                world.removeRobot(robotName);
+            }
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
