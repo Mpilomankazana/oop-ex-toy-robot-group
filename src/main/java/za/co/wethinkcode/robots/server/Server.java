@@ -11,10 +11,10 @@ import za.co.wethinkcode.robots.robot.Robot;
 import za.co.wethinkcode.robots.world.World;
 
 /**
- * The main server class for the Robot World application.
- * Listens on port 5000 for incoming robot client connections.
- * Each connected client is handled in its own thread via ClientHandler.
- * Loads world configuration from config.properties on startup.
+ * The main server class for the Robot World application. Listens on port 5000
+ * for incoming robot client connections. Each connected client is handled in
+ * its own thread via ClientHandler. Loads world configuration from
+ * config.properties on startup.
  */
 public class Server {
 
@@ -25,12 +25,11 @@ public class Server {
         this.world = world;
     }
 
-/**
- * Starts the server — opens port 5000, starts the console thread,
- * and accepts incoming client connections in a loop.
- * Each connection spawns a new ClientHandler thread.
- */
-
+    /**
+     * Starts the server — opens port 5000, starts the console thread, and
+     * accepts incoming client connections in a loop. Each connection spawns a
+     * new ClientHandler thread.
+     */
     public void start() {
         try {
             serverSocket = new ServerSocket(5000);
@@ -88,10 +87,11 @@ public class Server {
             System.out.println("Server stopped.");
         }
     }
-/**
- * Stops the server by closing the ServerSocket.
- * Any active client connections will be terminated.
- */
+
+    /**
+     * Stops the server by closing the ServerSocket. Any active client
+     * connections will be terminated.
+     */
     public void stop() {
         try {
             if (serverSocket != null && !serverSocket.isClosed()) {
@@ -101,13 +101,14 @@ public class Server {
             e.printStackTrace();
         }
     }
-/**
- * Entry point for the server program.
- * Loads world from config.properties if available,
- * otherwise falls back to a default 10x10 world.
- * @param args command line arguments (not used)
- * @throws Exception if server socket cannot be opened
- */
+
+    /**
+     * Entry point for the server program. Loads world from config.properties if
+     * available, otherwise falls back to a default 10x10 world.
+     *
+     * @param args command line arguments (not used)
+     * @throws Exception if server socket cannot be opened
+     */
 
     public static void main(String[] args) throws Exception {
         World loadedWorld;
