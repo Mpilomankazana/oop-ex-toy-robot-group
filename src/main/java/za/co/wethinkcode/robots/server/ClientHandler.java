@@ -28,6 +28,11 @@ public class ClientHandler implements Runnable {
     private final CommandProcessor processor = new CommandProcessor();
     private final GameEngine engine = new GameEngine();
 
+/**
+ * Creates a new ClientHandler for the given socket and world.
+ * @param socket the client's socket connection
+ * @param world the shared world instance
+ */
     public ClientHandler(Socket socket, World world) {
         this.socket = socket;
         this.world = world;
