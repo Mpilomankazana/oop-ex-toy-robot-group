@@ -1,14 +1,14 @@
 package za.co.wethinkcode.robots.server;
 
-import za.co.wethinkcode.flow.Recorder;
-import za.co.wethinkcode.robots.world.World;
-import za.co.wethinkcode.robots.robot.Robot;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
 import java.util.Scanner;
+
+import za.co.wethinkcode.flow.Recorder;
+import za.co.wethinkcode.robots.robot.Robot;
+import za.co.wethinkcode.robots.world.World;
 
 public class Server {
 
@@ -49,10 +49,12 @@ public class Server {
                                 break;
                             case "dump":
                                 System.out.println("World size: " + world.getWidth() + "x" + world.getHeight());
+                                System.out.println("Reload time: " + world.getReloadTime() + " seconds");
+                                System.out.println("Repair time: " + world.getRepairTime() + " seconds");
+                                System.out.println("Max shields: " + world.getMaxShields());
                                 System.out.println("Robots in world: " + world.getRobots().size());
                                 for (Robot robot : world.getRobots()) {
-                                    System.out.println("  - " + robot.getName() +
-                                        " at (" + robot.getX() + "," + robot.getY() + ")");
+                                    System.out.println("  - " + robot.toString());
                                 }
                                 break;
                             default:
