@@ -38,6 +38,12 @@ public class ClientHandler implements Runnable {
         this.world = world;
     }
 
+    /**
+   * Main loop — reads JSON commands from the client and sends responses.
+   * Handles: launch, state, forward, back, turn, look, fire, repair, reload.
+   * Runs until the client disconnects or the robot dies.
+   * On disconnect, removes the robot from the world and closes the socket.
+   */
     @Override
     public void run() {
         try (
