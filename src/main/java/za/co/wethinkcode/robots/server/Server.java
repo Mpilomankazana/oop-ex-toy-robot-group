@@ -10,6 +10,12 @@ import za.co.wethinkcode.flow.Recorder;
 import za.co.wethinkcode.robots.robot.Robot;
 import za.co.wethinkcode.robots.world.World;
 
+/**
+ * The main server class for the Robot World application.
+ * Listens on port 5000 for incoming robot client connections.
+ * Each connected client is handled in its own thread via ClientHandler.
+ * Loads world configuration from config.properties on startup.
+ */
 public class Server {
 
     private final World world;
