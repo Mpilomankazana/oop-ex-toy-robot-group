@@ -15,10 +15,10 @@ import za.co.wethinkcode.robots.robot.Robot;
 import za.co.wethinkcode.robots.world.World;
 
 /**
- * Handles communication with a single connected robot client.
- * Runs in its own thread — one instance per connected robot.
- * Reads JSON commands from the client, processes them using the
- * GameEngine and World, and sends JSON responses back.
+ * Handles communication with a single connected robot client. Runs in its own
+ * thread — one instance per connected robot. Reads JSON commands from the
+ * client, processes them using the GameEngine and World, and sends JSON
+ * responses back.
  */
 public class ClientHandler implements Runnable {
 
@@ -28,22 +28,23 @@ public class ClientHandler implements Runnable {
     private final CommandProcessor processor = new CommandProcessor();
     private final GameEngine engine = new GameEngine();
 
-/**
- * Creates a new ClientHandler for the given socket and world.
- * @param socket the client's socket connection
- * @param world the shared world instance
- */
+    /**
+     * Creates a new ClientHandler for the given socket and world.
+     *
+     * @param socket the client's socket connection
+     * @param world the shared world instance
+     */
     public ClientHandler(Socket socket, World world) {
         this.socket = socket;
         this.world = world;
     }
 
     /**
-   * Main loop — reads JSON commands from the client and sends responses.
-   * Handles: launch, state, forward, back, turn, look, fire, repair, reload.
-   * Runs until the client disconnects or the robot dies.
-   * On disconnect, removes the robot from the world and closes the socket.
-   */
+     * Main loop — reads JSON commands from the client and sends responses.
+     * Handles: launch, state, forward, back, turn, look, fire, repair, reload.
+     * Runs until the client disconnects or the robot dies. On disconnect,
+     * removes the robot from the world and closes the socket.
+     */
     @Override
     public void run() {
         try (
@@ -216,6 +217,11 @@ public class ClientHandler implements Runnable {
                         );
                         out.println(Protocol.buildOkResponse("Shields repaired", state));
                     }
+                    /**
+                     * Handles the reload command. Blocks the robot for the
+                     * configured reload time, then restores shots to maximum
+                     * and sets status to NORMAL.
+                     */
                     case "reload" -> {
                         Robot robot = world.getRobot(robotName);
                         if (robot == null) {
@@ -247,6 +253,7 @@ public class ClientHandler implements Runnable {
                         );
                         out.println(Protocol.buildOkResponse("Reloaded", doneState));
                     }
+
                     default -> {
                         out.println(Protocol.buildErrorResponse("Command not implemented: " + command));
                     }
