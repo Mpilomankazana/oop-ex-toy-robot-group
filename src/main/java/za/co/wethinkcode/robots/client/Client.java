@@ -312,6 +312,11 @@ public class Client {
             if (state != null) {
                 System.out.println("Robot repaired");
                 System.out.println(" Shields: " + state.get("shields").asInt());
+                // check if robot is DEAD after repair
+                String status= state.get("status").asText();
+                if (status.equals("DEAD")) {
+                    System.out.println("Your robot is DEAD");
+                }
             } else {
                 System.out.println(response);
             }
