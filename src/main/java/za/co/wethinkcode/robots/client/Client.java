@@ -249,6 +249,11 @@ public class Client {
                 System.out.println(message);
                 System.out.println(" Position: " + state.get("position"));
                 System.out.println(" Direction: " + state.get("direction").asText());
+                //CHECK IF THE ROBOT IS DEAD
+                String status = state.get("status").asText();
+                if (status.equals("DEAD")) {
+                    System.out.println("Your robot is DEAD");
+                }
             } else {
                 System.out.println(response);
             }
