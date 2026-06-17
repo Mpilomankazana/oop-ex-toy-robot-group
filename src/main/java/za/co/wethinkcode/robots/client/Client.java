@@ -124,7 +124,7 @@ public class Client {
                 case "look":
                 case "state":
                 case "repair":
-                case"reload":
+                case "reload":
 
                     json = "{\"robot\":\"" + robotName +
                             "\",\"command\":\"" + command +
@@ -159,13 +159,24 @@ public class Client {
             } else if (command.equals("repair")) {
                 displayRepairResponse(response);
 
-            } else if (  command.equals("reload")) {
+            } else if (command.equals("reload")) {
                 displayReloadResponse(response);
 
             } else {
                 System.out.println(response);
             }
 
+            try {
+                JsonNode node = mapper.readTree(response);
+                JsonNode state = node.get("state");
+                if (state != null && state.get("status").asText().equals("DEAD")) {
+                    if (!deadRobots.contains(robotName)) {
+                        deadRobots.add(robotName);
+                    }
+                }
+            } catch (Exception e) {
+
+            }
         }
 
 
