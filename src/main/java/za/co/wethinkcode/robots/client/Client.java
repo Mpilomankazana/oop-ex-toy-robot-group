@@ -292,6 +292,11 @@ public class Client {
                     System.out.println("Miss, no robot in range.");
                 }
                 System.out.println(" shots remaining: " + shotsLeft);
+                //check if robot is DEAD after firing
+                String status = state.get("status").asText();
+                if (status.equals("DEAD")) {
+                    System.out.println("Your robot is DEAD");
+                }
             } else {
                 System.out.println(response);
             }
