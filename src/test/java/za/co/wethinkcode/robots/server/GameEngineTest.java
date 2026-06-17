@@ -3,6 +3,7 @@ package za.co.wethinkcode.robots.server;
 import org.junit.jupiter.api.Test;
 import za.co.wethinkcode.robots.robot.Direction;
 import za.co.wethinkcode.robots.robot.Robot;
+import za.co.wethinkcode.robots.robot.RobotTest;
 import za.co.wethinkcode.robots.world.World;
 
 import java.util.List;
@@ -230,7 +231,7 @@ public class GameEngineTest {
         Robot second = engine.launch("HAL", world);
 
         assertNotNull(first);
-        assertNotNull(second);
+        assertNull(second);
     }
 
     @Test
@@ -310,5 +311,62 @@ public class GameEngineTest {
         boolean obstacleSeen = result.stream()
                 .anyMatch(item -> item.get("type").equals("OBSTACLE")
                         && ((Integer) item.get("distance")) == 10);
+
+        assertFalse(obstacleSeen);
+    }
+
+    @Test
+    void shouldNotHitDeadRobotAgain() {
+
+        World world = new World(20, 20);
+        GameEngine engine = new GameEngine();
+
+        Robot shooter = new Robot("HAL", 0, 0);
+        shooter.setDirection(Direction.NORTH);
+
+        Robot target = new Robot("EVA", 0, 2);
+        target.setShields(1);
+
+        world.addRobot(shooter);
+        world.addRobot(target);
+
+        engine.fire(shooter, world);
+
+        assertNull(world.getRobotAt(0, 2));
+    }
+
+    @Test
+    void shouldReturnErrorWhenOutOfShots() {
+
+        World world = new World(20, 20);
+        GameEngine engine = new GameEngine();
+
+        Robot shooter = new Robot("HAL");
+        shooter.setShots(0);
+
+        GameEngine.FireResult result = engine.fire(shooter, world);
+
+        assertEquals("ERROR", result.outcome);
+    }
+
+    @Test
+    void shouldNotFireThroughObstacle() {
+
+        World world = new World(20, 20);
+        GameEngine engine = new GameEngine();
+
+        Robot shooter = new Robot("HAL", 0, 0);
+        shooter.setDirection(Direction.NORTH);
+
+        Robot target = new Robot("EVA", 0, 4);
+
+        world.addObstacle(0, 2);
+
+        world.addRobot(shooter);
+        world.addRobot(target);
+
+        GameEngine.FireResult result = engine.fire(shooter, world);
+
+        assertEquals("MISS", result.outcome);
     }
 }
