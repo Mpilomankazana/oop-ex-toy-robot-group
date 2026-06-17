@@ -42,8 +42,10 @@ public class Client {
         //store all robot names
         List<String> robotNames = new ArrayList<>();
 
-        //Launch each robot one by one
+        //tracking robots that are dead
+        List<String> deadRobots = new ArrayList<>();
 
+        //Launch each robot one by one
         for (int i = 0; i < numRobots; i++) {
             System.out.print("Enter robot name" + (i + 1) + ": ");
             String robotName = scanner.nextLine();
