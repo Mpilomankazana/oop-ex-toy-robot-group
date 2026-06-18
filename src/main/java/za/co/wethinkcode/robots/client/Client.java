@@ -71,7 +71,7 @@ public class Client {
 
             //preventing dead robots from sending commands
             if (deadRobots.contains(robotName)) {
-                System.out.println(robotName + "is DEAD and cannot send commands");
+                System.out.println(robotName + " is DEAD and cannot send commands");
                 continue;
             }
 
