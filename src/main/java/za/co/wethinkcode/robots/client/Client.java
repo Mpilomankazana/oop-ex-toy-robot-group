@@ -42,8 +42,10 @@ public class Client {
         //store all robot names
         List<String> robotNames = new ArrayList<>();
 
-        //Launch each robot one by one
+        //tracking robots that are dead
+        List<String> deadRobots = new ArrayList<>();
 
+        //Launch each robot one by one
         for (int i = 0; i < numRobots; i++) {
             System.out.print("Enter robot name" + (i + 1) + ": ");
             String robotName = scanner.nextLine();
@@ -64,6 +66,12 @@ public class Client {
             //
             if (!robotNames.contains(robotName)) {
                 System.out.println("Unknown robot. choose from: " + robotNames);
+                continue;
+            }
+
+            //preventing dead robots from sending commands
+            if (deadRobots.contains(robotName)) {
+                System.out.println(robotName + " is DEAD and cannot send commands");
                 continue;
             }
 
@@ -122,7 +130,7 @@ public class Client {
                 case "look":
                 case "state":
                 case "repair":
-                case"reload":
+                case "reload":
 
                     json = "{\"robot\":\"" + robotName +
                             "\",\"command\":\"" + command +
@@ -157,13 +165,24 @@ public class Client {
             } else if (command.equals("repair")) {
                 displayRepairResponse(response);
 
-            } else if (  command.equals("reload")) {
+            } else if (command.equals("reload")) {
                 displayReloadResponse(response);
 
             } else {
                 System.out.println(response);
             }
 
+            try {
+                JsonNode node = mapper.readTree(response);
+                JsonNode state = node.get("state");
+                if (state != null && state.get("status").asText().equals("DEAD")) {
+                    if (!deadRobots.contains(robotName)) {
+                        deadRobots.add(robotName);
+                    }
+                }
+            } catch (Exception e) {
+
+            }
         }
 
 
@@ -226,7 +245,12 @@ public class Client {
                 System.out.println("  Direction: " + state.get("direction").asText());
                 System.out.println("  Shields:   " + state.get("shields").asInt());
                 System.out.println("  Shots:     " + state.get("shots").asInt());
-                System.out.println("  Status:    " + state.get("status").asText());
+
+                String status = state.get("status").asText();
+                System.out.println(" Status: " + status);
+                if (status.equals("DEAD")) {
+                    System.out.println("Your robot is DEAD!");
+                }
             } else {
                 System.out.println(response);
             }
@@ -244,6 +268,11 @@ public class Client {
                 System.out.println(message);
                 System.out.println(" Position: " + state.get("position"));
                 System.out.println(" Direction: " + state.get("direction").asText());
+                //CHECK IF THE ROBOT IS DEAD
+                String status = state.get("status").asText();
+                if (status.equals("DEAD")) {
+                    System.out.println("Your robot is DEAD");
+                }
             } else {
                 System.out.println(response);
             }
@@ -282,6 +311,11 @@ public class Client {
                     System.out.println("Miss, no robot in range.");
                 }
                 System.out.println(" shots remaining: " + shotsLeft);
+                //check if robot is DEAD after firing
+                String status = state.get("status").asText();
+                if (status.equals("DEAD")) {
+                    System.out.println("Your robot is DEAD");
+                }
             } else {
                 System.out.println(response);
             }
@@ -297,6 +331,11 @@ public class Client {
             if (state != null) {
                 System.out.println("Robot repaired");
                 System.out.println(" Shields: " + state.get("shields").asInt());
+                // check if robot is DEAD after repair
+                String status= state.get("status").asText();
+                if (status.equals("DEAD")) {
+                    System.out.println("Your robot is DEAD");
+                }
             } else {
                 System.out.println(response);
             }
