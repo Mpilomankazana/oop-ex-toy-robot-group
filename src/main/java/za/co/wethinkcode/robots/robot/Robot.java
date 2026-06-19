@@ -4,6 +4,7 @@ package za.co.wethinkcode.robots.robot;
 public class Robot {
 
     private final String name;
+    private final String make;
     private int x;
     private int y;
     private Direction direction;
@@ -13,7 +14,12 @@ public class Robot {
 
 
     public Robot(String name) {
+        this(name, "sniper");
+    }
+
+    public Robot(String name, String make) {
         this.name      = name;
+        this.make      = make;
         this.x         = 0;
         this.y         = 0;
         this.direction = Direction.NORTH;
@@ -23,7 +29,11 @@ public class Robot {
     }
 
     public Robot(String name, int x, int y) {
-        this(name);
+        this(name, "sniper", x, y);
+    }
+
+    public Robot(String name, String make, int x, int y) {
+        this(name, make);
         this.x = x;
         this.y = y;
     }
@@ -53,6 +63,9 @@ public class Robot {
 
     public String getName()      {
         return name;
+    }
+    public String getMake()      {
+        return make;
     }
     public int    getX()         {
         return x;

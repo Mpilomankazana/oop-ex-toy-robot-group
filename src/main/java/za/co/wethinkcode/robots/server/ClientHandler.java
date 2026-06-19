@@ -49,8 +49,7 @@ public class ClientHandler implements Runnable {
     public void run() {
         try (
                 BufferedReader in = new BufferedReader(
-                        new InputStreamReader(socket.getInputStream()));
-                PrintWriter out = new PrintWriter(
+                        new InputStreamReader(socket.getInputStream())); PrintWriter out = new PrintWriter(
                         socket.getOutputStream(), true)) {
             String line;
             while ((line = in.readLine()) != null) {
@@ -64,10 +63,18 @@ public class ClientHandler implements Runnable {
 
                 robotName = request.getRobot();
                 String command = request.getCommand();
-
+                    /*
+                        * Process the command using the GameEngine and World. Each case
+                        * handles a different command, updates the robot's state, and sends a response back to the client. After processing, checks if the
+                        * robot is dead and breaks the loop if so.
+                     */
                 switch (command.toLowerCase()) {
                     case "launch" -> {
-                        Robot robot = engine.launch(robotName, world);
+                        String make = "sniper";
+                        if (request.getArguments() != null && request.getArguments().length > 0) {
+                            make = request.getArguments()[0].toString();
+                        }
+                        Robot robot = engine.launch(robotName, make, world);
                         if (robot == null) {
                             out.println(Protocol.buildErrorResponse("No space in world"));
                             continue;
@@ -265,4 +272,3 @@ public class ClientHandler implements Runnable {
         }
     }
 }
-

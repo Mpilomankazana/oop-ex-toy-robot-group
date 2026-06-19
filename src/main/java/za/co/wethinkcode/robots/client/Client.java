@@ -3,14 +3,12 @@ package za.co.wethinkcode.robots.client;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 //adding two imports to store multiple robots names
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class Client {
 
@@ -44,19 +42,31 @@ public class Client {
 
         //tracking robots that are dead
         List<String> deadRobots = new ArrayList<>();
-
+         /*
+            * Loop to launch multiple robots. For each robot, prompts the user for a name and make, sends a launch command to the server,
+            nd displays the response. After launching, enters a command loop where the user can control any of the launched robots by name.
+            The loop checks for valid robot names, prevents dead robots from sending commands, and processes various commands 
+            (forward, back, turn, fire, look, state, repair, reload) by sending JSON requests to the server and displaying responses.
+            If a robot's status becomes DEAD after any command, it is added to the deadRobots list to prevent further commands.  
+        */
         //Launch each robot one by one
         for (int i = 0; i < numRobots; i++) {
             System.out.print("Enter robot name" + (i + 1) + ": ");
             String robotName = scanner.nextLine();
             robotNames.add(robotName);
 
-            String launchJson = "{\"robot\":\"" + robotName + "\",\"command\":\"launch\",\"arguments\":[\"sniper\",5,5]}";
+            System.out.print("Enter robot make (e.g. sniper, tank): ");
+            String robotMake = scanner.nextLine();
+            if (robotMake.trim().isEmpty()) {
+                robotMake = "sniper";
+            }
+
+            String launchJson = "{\"robot\":\"" + robotName
+                    + "\",\"command\":\"launch\",\"arguments\":[\"" + robotMake + "\"]}";
             out.println(launchJson);
             String launchResponse = in.readLine();
             displayLaunchResponse(launchResponse);
         }
-
 
         while (true) {
 
@@ -77,7 +87,6 @@ public class Client {
 
             System.out.print(robotName + ">");
             String input = scanner.nextLine();
-
 
             if (input.trim().isEmpty()) {
                 continue;
@@ -109,9 +118,9 @@ public class Client {
                         continue;
                     }
 
-                    json = "{\"robot\":\"" + robotName +
-                            "\",\"command\":\"" + command +
-                            "\",\"arguments\":[" + parts[1] + "]}";
+                    json = "{\"robot\":\"" + robotName
+                            + "\",\"command\":\"" + command
+                            + "\",\"arguments\":[" + parts[1] + "]}";
                     break;
 
                 case "turn":
@@ -120,9 +129,9 @@ public class Client {
                         continue;
                     }
 
-                    json = "{\"robot\":\"" + robotName +
-                            "\",\"command\":\"turn\"" +
-                            ",\"arguments\":[\"" + parts[1] + "\"]}";
+                    json = "{\"robot\":\"" + robotName
+                            + "\",\"command\":\"turn\""
+                            + ",\"arguments\":[\"" + parts[1] + "\"]}";
 
                     break;
                 case "fire":
@@ -131,9 +140,9 @@ public class Client {
                 case "repair":
                 case "reload":
 
-                    json = "{\"robot\":\"" + robotName +
-                            "\",\"command\":\"" + command +
-                            "\",\"arguments\":[]}";
+                    json = "{\"robot\":\"" + robotName
+                            + "\",\"command\":\"" + command
+                            + "\",\"arguments\":[]}";
                     break;
 
                 case "help":
@@ -145,7 +154,6 @@ public class Client {
 
             }
             out.println(json);
-
 
             String response = in.readLine();
 
@@ -187,10 +195,8 @@ public class Client {
             }
         }
 
-
         socket.close();
     }
-
 
     private static void displayLaunchResponse(String response) {
         try {
@@ -219,10 +225,10 @@ public class Client {
                 for (JsonNode obj : objects) {
                     if (!obj.get("type").asText().equals("NONE")) {
 
-                        System.out.println(" " +
-                                obj.get("direction").asText() + ": " +
-                                obj.get("type").asText() + " at distance " +
-                                obj.get("distance").asInt()
+                        System.out.println(" "
+                                + obj.get("direction").asText() + ": "
+                                + obj.get("type").asText() + " at distance "
+                                + obj.get("distance").asInt()
                         );
                         sawSomething = true;
                     }
@@ -235,7 +241,6 @@ public class Client {
             System.out.println("unexpected response from java");
         }
     }
-
 
     private static void displayStateResponse(String response) {
         try {
@@ -288,8 +293,8 @@ public class Client {
             JsonNode node = mapper.readTree(response);
             JsonNode state = node.get("state");
             if (state != null) {
-                System.out.println("Turned. Now facing: " +
-                        state.get("direction").asText());
+                System.out.println("Turned. Now facing: "
+                        + state.get("direction").asText());
             } else {
                 System.out.println(response);
             }
@@ -310,8 +315,8 @@ public class Client {
                 if (outcome.equals("KILL")) {
                     System.out.println("Target robot destroyed!");
                 } else if (outcome.equals("HIT")) {
-                    System.out.println("HIT! Target struck at distance " +
-                            data.get("distance").asInt());
+                    System.out.println("HIT! Target struck at distance "
+                            + data.get("distance").asInt());
                 } else {
                     System.out.println("Miss, no robot in range.");
                 }
@@ -337,7 +342,7 @@ public class Client {
                 System.out.println("Robot repaired");
                 System.out.println(" Shields: " + state.get("shields").asInt());
                 // check if robot is DEAD after repair
-                String status= state.get("status").asText();
+                String status = state.get("status").asText();
                 if (status.equals("DEAD")) {
                     System.out.println("Your robot is DEAD");
                 }
@@ -380,25 +385,3 @@ public class Client {
         System.out.println("================================================\n");
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
