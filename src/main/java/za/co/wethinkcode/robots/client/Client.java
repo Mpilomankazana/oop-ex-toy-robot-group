@@ -11,7 +11,6 @@ import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Client {
 
     private static final ObjectMapper mapper = new ObjectMapper();
@@ -43,18 +42,23 @@ public class Client {
         List<String> robotNames = new ArrayList<>();
 
         //Launch each robot one by one
-
         for (int i = 0; i < numRobots; i++) {
             System.out.print("Enter robot name" + (i + 1) + ": ");
             String robotName = scanner.nextLine();
             robotNames.add(robotName);
 
-            String launchJson = "{\"robot\":\"" + robotName + "\",\"command\":\"launch\",\"arguments\":[\"sniper\",5,5]}";
+            System.out.print("Enter robot make (e.g. sniper, tank): ");
+            String robotMake = scanner.nextLine();
+            if (robotMake.trim().isEmpty()) {
+                robotMake = "sniper";
+            }
+
+            String launchJson = "{\"robot\":\"" + robotName
+                    + "\",\"command\":\"launch\",\"arguments\":[\"" + robotMake + "\"]}";
             out.println(launchJson);
             String launchResponse = in.readLine();
             displayLaunchResponse(launchResponse);
         }
-
 
         while (true) {
 
@@ -69,7 +73,6 @@ public class Client {
 
             System.out.print(robotName + ">");
             String input = scanner.nextLine();
-
 
             if (input.trim().isEmpty()) {
                 continue;
@@ -102,9 +105,9 @@ public class Client {
                         continue;
                     }
 
-                    json = "{\"robot\":\"" + robotName +
-                            "\",\"command\":\"" + command +
-                            "\",\"arguments\":[" + parts[1] + "]}";
+                    json = "{\"robot\":\"" + robotName
+                            + "\",\"command\":\"" + command
+                            + "\",\"arguments\":[" + parts[1] + "]}";
                     break;
 
                 case "turn":
@@ -113,20 +116,20 @@ public class Client {
                         continue;
                     }
 
-                    json = "{\"robot\":\"" + robotName +
-                            "\",\"command\":\"turn\"" +
-                            ",\"arguments\":[\"" + parts[1] + "\"]}";
+                    json = "{\"robot\":\"" + robotName
+                            + "\",\"command\":\"turn\""
+                            + ",\"arguments\":[\"" + parts[1] + "\"]}";
 
                     break;
                 case "fire":
                 case "look":
                 case "state":
                 case "repair":
-                case"reload":
+                case "reload":
 
-                    json = "{\"robot\":\"" + robotName +
-                            "\",\"command\":\"" + command +
-                            "\",\"arguments\":[]}";
+                    json = "{\"robot\":\"" + robotName
+                            + "\",\"command\":\"" + command
+                            + "\",\"arguments\":[]}";
                     break;
 
                 default:
@@ -135,7 +138,6 @@ public class Client {
 
             }
             out.println(json);
-
 
             String response = in.readLine();
 
@@ -157,7 +159,7 @@ public class Client {
             } else if (command.equals("repair")) {
                 displayRepairResponse(response);
 
-            } else if (  command.equals("reload")) {
+            } else if (command.equals("reload")) {
                 displayReloadResponse(response);
 
             } else {
@@ -166,10 +168,8 @@ public class Client {
 
         }
 
-
         socket.close();
     }
-
 
     private static void displayLaunchResponse(String response) {
         try {
@@ -198,10 +198,10 @@ public class Client {
                 for (JsonNode obj : objects) {
                     if (!obj.get("type").asText().equals("NONE")) {
 
-                        System.out.println(" " +
-                                obj.get("direction").asText() + ": " +
-                                obj.get("type").asText() + " at distance " +
-                                obj.get("distance").asInt()
+                        System.out.println(" "
+                                + obj.get("direction").asText() + ": "
+                                + obj.get("type").asText() + " at distance "
+                                + obj.get("distance").asInt()
                         );
                         sawSomething = true;
                     }
@@ -214,7 +214,6 @@ public class Client {
             System.out.println("unexpected response from java");
         }
     }
-
 
     private static void displayStateResponse(String response) {
         try {
@@ -257,8 +256,8 @@ public class Client {
             JsonNode node = mapper.readTree(response);
             JsonNode state = node.get("state");
             if (state != null) {
-                System.out.println("Turned. Now facing: " +
-                        state.get("direction").asText());
+                System.out.println("Turned. Now facing: "
+                        + state.get("direction").asText());
             } else {
                 System.out.println(response);
             }
@@ -276,8 +275,8 @@ public class Client {
                 String outcome = data.get("outcome").asText();
                 int shotsLeft = state.get("shots").asInt();
                 if (outcome.equals("HIT")) {
-                    System.out.println("HIT! Target struck at distance " +
-                            data.get("distance").asInt());
+                    System.out.println("HIT! Target struck at distance "
+                            + data.get("distance").asInt());
                 } else {
                     System.out.println("Miss, no robot in range.");
                 }
@@ -321,25 +320,3 @@ public class Client {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
