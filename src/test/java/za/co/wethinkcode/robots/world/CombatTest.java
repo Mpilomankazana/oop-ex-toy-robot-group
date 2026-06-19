@@ -40,4 +40,43 @@ public class CombatTest {
 
         assertEquals("DEAD", robot.getStatus());
     }
+
+    @Test
+    void shouldAllowShieldToReachZero() {
+
+        Robot robot = new Robot("HAL");
+
+        robot.setShields(1);
+
+        robot.setShields(
+                robot.getShields() - 1);
+
+        assertEquals(0,
+                robot.getShields());
+    }
+
+    @Test
+    void shouldAllowShotsToReachZero() {
+
+        Robot robot = new Robot("HAL");
+
+        robot.setShots(1);
+
+        robot.setShots(
+                robot.getShots() - 1);
+
+        assertEquals(0,
+                robot.getShots());
+    }
+
+    @Test
+    void shouldStoreDestroyedStatus() {
+
+        Robot robot = new Robot("HAL");
+
+        robot.setStatus("DESTROYED");
+
+        assertEquals("DESTROYED",
+                robot.getStatus());
+    }
 }

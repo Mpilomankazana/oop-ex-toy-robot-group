@@ -116,4 +116,65 @@ public class RobotTest {
 
         assertEquals(1, robot.getShields());
     }
+
+    @Test
+    void shouldSetAndGetXCoordinate() {
+
+        Robot robot = new Robot("HAL");
+
+        robot.setX(10);
+
+        assertEquals(10, robot.getX());
+    }
+
+    @Test
+    void shouldSetAndGetYCoordinate() {
+
+        Robot robot = new Robot("HAL");
+
+        robot.setY(20);
+
+        assertEquals(20, robot.getY());
+    }
+
+    @Test
+    void shouldSetDirection() {
+
+        Robot robot = new Robot("HAL");
+
+        robot.setDirection(Direction.SOUTH);
+
+        assertEquals(Direction.SOUTH,
+                robot.getDirection());
+    }
+
+    @Test
+    void shouldSetStatus() {
+
+        Robot robot = new Robot("HAL");
+
+        robot.setStatus("REPAIRING");
+
+        assertEquals("REPAIRING",
+                robot.getStatus());
+    }
+
+    @Test
+    void shouldSetShots() {
+
+        Robot robot = new Robot("HAL");
+
+        robot.setShots(3);
+
+        assertEquals(3, robot.getShots());
+    }
+
+    @Test
+    void shouldGenerateToStringContainingRobotName() {
+
+        Robot robot = new Robot("HAL");
+
+        assertTrue(robot.toString()
+                .contains("HAL"));
+    }
 }

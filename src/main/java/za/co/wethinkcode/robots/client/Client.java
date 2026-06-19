@@ -2,7 +2,7 @@ package za.co.wethinkcode.robots.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import za.co.wethinkcode.robots.protocol.Protocol;
+
 
 import java.io.*;
 import java.net.Socket;
@@ -41,6 +41,9 @@ public class Client {
         //store all robot names
         List<String> robotNames = new ArrayList<>();
 
+        //tracking robots that are dead
+        List<String> deadRobots = new ArrayList<>();
+
         //Launch each robot one by one
         for (int i = 0; i < numRobots; i++) {
             System.out.print("Enter robot name" + (i + 1) + ": ");
@@ -65,9 +68,15 @@ public class Client {
             //ask which robot to control
             System.out.print("which robot do you want to control ?(" + String.join("/", robotNames) + "): ");
             String robotName = scanner.nextLine();
-            //
+
             if (!robotNames.contains(robotName)) {
                 System.out.println("Unknown robot. choose from: " + robotNames);
+                continue;
+            }
+
+            //preventing dead robots from sending commands
+            if (deadRobots.contains(robotName)) {
+                System.out.println(robotName + " is DEAD and cannot send commands");
                 continue;
             }
 
@@ -83,7 +92,6 @@ public class Client {
                 break;
             }
 
-            // String json = "{\"robot\":\"" + robotName + "\",\"command\":\"" + input + "\",\"arguments\":[]}";
             String[] parts = input.trim().split("\\s+");
             String command = parts[0].toLowerCase();
 
@@ -132,6 +140,9 @@ public class Client {
                             + "\",\"arguments\":[]}";
                     break;
 
+                case "help":
+                    printHelp();
+                    continue;
                 default:
                     System.out.println("Unknown command");
                     continue;
@@ -166,6 +177,17 @@ public class Client {
                 System.out.println(response);
             }
 
+            try {
+                JsonNode node = mapper.readTree(response);
+                JsonNode state = node.get("state");
+                if (state != null && state.get("status").asText().equals("DEAD")) {
+                    if (!deadRobots.contains(robotName)) {
+                        deadRobots.add(robotName);
+                    }
+                }
+            } catch (Exception e) {
+
+            }
         }
 
         socket.close();
@@ -225,7 +247,12 @@ public class Client {
                 System.out.println("  Direction: " + state.get("direction").asText());
                 System.out.println("  Shields:   " + state.get("shields").asInt());
                 System.out.println("  Shots:     " + state.get("shots").asInt());
-                System.out.println("  Status:    " + state.get("status").asText());
+
+                String status = state.get("status").asText();
+                System.out.println(" Status: " + status);
+                if (status.equals("DEAD")) {
+                    System.out.println("Your robot is DEAD!");
+                }
             } else {
                 System.out.println(response);
             }
@@ -243,6 +270,11 @@ public class Client {
                 System.out.println(message);
                 System.out.println(" Position: " + state.get("position"));
                 System.out.println(" Direction: " + state.get("direction").asText());
+                // CHECK IF THE ROBOT IS DEAD
+                String status = state.get("status").asText();
+                if (status.equals("DEAD")) {
+                    System.out.println("Your robot is DEAD");
+                }
             } else {
                 System.out.println(response);
             }
@@ -275,12 +307,17 @@ public class Client {
                 String outcome = data.get("outcome").asText();
                 int shotsLeft = state.get("shots").asInt();
                 if (outcome.equals("HIT")) {
-                    System.out.println("HIT! Target struck at distance "
-                            + data.get("distance").asInt());
+                    System.out.println("HIT! Target struck at distance " +
+                            data.get("distance").asInt());
                 } else {
                     System.out.println("Miss, no robot in range.");
                 }
                 System.out.println(" shots remaining: " + shotsLeft);
+                //check if robot is DEAD after firing
+                String status = state.get("status").asText();
+                if (status.equals("DEAD")) {
+                    System.out.println("Your robot is DEAD");
+                }
             } else {
                 System.out.println(response);
             }
@@ -296,6 +333,11 @@ public class Client {
             if (state != null) {
                 System.out.println("Robot repaired");
                 System.out.println(" Shields: " + state.get("shields").asInt());
+                // check if robot is DEAD after repair
+                String status= state.get("status").asText();
+                if (status.equals("DEAD")) {
+                    System.out.println("Your robot is DEAD");
+                }
             } else {
                 System.out.println(response);
             }
@@ -318,5 +360,20 @@ public class Client {
         } catch (Exception e) {
             System.out.println(response);
         }
+    }
+
+    private static void printHelp() {
+        System.out.println("\n=== ROBOT WORLD - AVAILABLE COMMANDS ===");
+        System.out.println(" launch                 - Launch your robot into the world");
+        System.out.println(" forward <steps>        - Move forward by number of steps");
+        System.out.println(" back <steps>           - Move backwards by number of steps");
+        System.out.println(" turn left|right        - Turn the robot left or right");
+        System.out.println(" look                   -  Look around and see nearby objects");
+        System.out.println(" fire                   -  Fire in the direction you're facing");
+        System.out.println(" repair                 - Repair shields (robot pauses during repair)");
+        System.out.println(" state                  -  Show your robot's current state");
+        System.out.println(" help                   -   Show this help message");
+        System.out.println(" quit                   - Disconnect from the server");
+        System.out.println("================================================\n");
     }
 }
