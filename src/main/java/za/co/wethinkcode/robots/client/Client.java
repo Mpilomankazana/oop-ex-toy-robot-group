@@ -3,7 +3,6 @@ package za.co.wethinkcode.robots.client;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
@@ -306,9 +305,12 @@ public class Client {
             if (data != null) {
                 String outcome = data.get("outcome").asText();
                 int shotsLeft = state.get("shots").asInt();
-                if (outcome.equals("HIT")) {
-                    System.out.println("HIT! Target struck at distance " +
-                            data.get("distance").asInt());
+                // check Kill before HIt
+                if (outcome.equals("KILL")) {
+                    System.out.println("Target robot destroyed!");
+                } else if (outcome.equals("HIT")) {
+                    System.out.println("HIT! Target struck at distance "
+                            + data.get("distance").asInt());
                 } else {
                     System.out.println("Miss, no robot in range.");
                 }
@@ -334,7 +336,7 @@ public class Client {
                 System.out.println("Robot repaired");
                 System.out.println(" Shields: " + state.get("shields").asInt());
                 // check if robot is DEAD after repair
-                String status= state.get("status").asText();
+                String status = state.get("status").asText();
                 if (status.equals("DEAD")) {
                     System.out.println("Your robot is DEAD");
                 }

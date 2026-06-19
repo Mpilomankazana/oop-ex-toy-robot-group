@@ -138,11 +138,11 @@ public class GameEngine {
         return new FireResult("MISS", -1, shooter.getShots());
     }
 
-    public void repair(Robot robot,World world){
+    public void repair(Robot robot, World world) {
         robot.setStatus("REPAIR");
         try {
-            Thread.sleep(world.getRepairTime()* 1000L);
-        } catch (InterruptedException e){
+            Thread.sleep(world.getRepairTime() * 1000L);
+        } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
         robot.setShields(world.getMaxShields());
@@ -223,21 +223,15 @@ public class GameEngine {
     }
 
     public Robot launch(String name, String make, World world) {
+
+        if (world.getRobot(name) != null) {
+            return null;
+        }
         Random random = new Random();
         int halfWidth = world.getWidth() / 2;
         int halfHeight = world.getHeight() / 2;
         int x, y;
         int attempts = 0;
-    public Robot launch(String name, World world){
-
-        if (world.getRobot(name) != null){
-            return null;
-        }
-       Random random = new Random();
-       int halfWidth = world.getWidth() / 2;
-       int halfHeight = world.getHeight() / 2;
-       int x, y;
-       int attempts = 0;
 
         do {
             x = random.nextInt(world.getWidth()) - halfWidth;
