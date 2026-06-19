@@ -63,7 +63,11 @@ public class ClientHandler implements Runnable {
 
                 robotName = request.getRobot();
                 String command = request.getCommand();
-
+                    /*
+                        * Process the command using the GameEngine and World. Each case
+                        * handles a different command, updates the robot's state, and sends a response back to the client. After processing, checks if the
+                        * robot is dead and breaks the loop if so.
+                     */
                 switch (command.toLowerCase()) {
                     case "launch" -> {
                         String make = "sniper";
