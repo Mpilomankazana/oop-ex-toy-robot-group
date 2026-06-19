@@ -1,13 +1,13 @@
 package za.co.wethinkcode.robots.server;
 
-import org.junit.jupiter.api.Disabled;
+
 import org.junit.jupiter.api.Test;
 import za.co.wethinkcode.robots.robot.Robot;
 import za.co.wethinkcode.robots.world.World;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Disabled("Waiting for repair implementation")
+
 public class RepairTest {
 
     @Test
@@ -19,7 +19,7 @@ public class RepairTest {
         Robot robot = new Robot("HAL");
         robot.setShields(1);
 
-        // engine.repair(robot, world);
+         engine.repair(robot, world);
 
         assertEquals(
                 world.getMaxShields(),
@@ -42,12 +42,12 @@ public class RepairTest {
 
         Robot robot = new Robot("HAL");
 
-        // engine.repair(robot, world);
+         engine.repair(robot, world);
 
         assertEquals(
-                "REPAIR",
+                "NORMAL",
                 robot.getStatus(),
-                "Robot status should be REPAIR while repairing"
+                "Robot should return to NORMAL after repair"
         );
     }
 
@@ -60,7 +60,7 @@ public class RepairTest {
         Robot robot = new Robot("HAL");
         robot.setShields(world.getMaxShields());
 
-        //engine.repair(robot, world);
+        engine.repair(robot, world);
 
         assertTrue(
                 robot.getShields() <= world.getMaxShields(),
@@ -77,7 +77,7 @@ public class RepairTest {
         Robot robot = new Robot("HAL");
         robot.setShields(0);
 
-        // engine.repair(robot, world):
+         engine.repair(robot, world);
 
         assertEquals(
                 world.getMaxShields(),
@@ -97,7 +97,7 @@ public class RepairTest {
         int startX = robot.getX();
         int startY = robot.getY();
 
-        // engine.repair(robot, world);
+         engine.repair(robot, world);
 
         assertEquals(startX, robot.getX());
         assertEquals(startY, robot.getY());
@@ -113,7 +113,7 @@ public class RepairTest {
 
         var originalDirection = robot.getDirection();
 
-        // engine.repair(robot, world);
+         engine.repair(robot, world);
 
         assertEquals(
                 originalDirection,
