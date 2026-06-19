@@ -307,7 +307,10 @@ public class Client {
             if (data != null) {
                 String outcome = data.get("outcome").asText();
                 int shotsLeft = state.get("shots").asInt();
-                if (outcome.equals("HIT")) {
+                // check Kill before HIt
+                if (outcome.equals("KILL")) {
+                    System.out.println("Target robot destroyed!");
+                } else if (outcome.equals("HIT")) {
                     System.out.println("HIT! Target struck at distance " +
                             data.get("distance").asInt());
                 } else {
