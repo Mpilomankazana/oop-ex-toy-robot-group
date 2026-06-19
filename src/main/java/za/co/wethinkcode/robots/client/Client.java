@@ -88,7 +88,6 @@ public class Client {
                 break;
             }
 
-            // String json = "{\"robot\":\"" + robotName + "\",\"command\":\"" + input + "\",\"arguments\":[]}";
             String[] parts = input.trim().split("\\s+");
             String command = parts[0].toLowerCase();
 
