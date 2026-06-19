@@ -120,7 +120,7 @@ public class GameEngine {
     public void repair(Robot robot,World world){
         robot.setStatus("REPAIR");
         try {
-            Thread.sleep(world.getRepairTime()* 1000l);
+            Thread.sleep(world.getRepairTime()* 1000L);
         } catch (InterruptedException e){
             Thread.currentThread().interrupt();
         }
@@ -194,7 +194,9 @@ public class GameEngine {
 
     public Robot launch(String name, World world){
 
-
+        if (world.getRobot(name) != null){
+            return null;
+        }
        Random random = new Random();
        int halfWidth = world.getWidth() / 2;
        int halfHeight = world.getHeight() / 2;
