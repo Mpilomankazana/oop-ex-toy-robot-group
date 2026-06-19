@@ -42,7 +42,13 @@ public class Client {
 
         //tracking robots that are dead
         List<String> deadRobots = new ArrayList<>();
-
+         /*
+            * Loop to launch multiple robots. For each robot, prompts the user for a name and make, sends a launch command to the server,
+            nd displays the response. After launching, enters a command loop where the user can control any of the launched robots by name.
+            The loop checks for valid robot names, prevents dead robots from sending commands, and processes various commands 
+            (forward, back, turn, fire, look, state, repair, reload) by sending JSON requests to the server and displaying responses.
+            If a robot's status becomes DEAD after any command, it is added to the deadRobots list to prevent further commands.  
+        */
         //Launch each robot one by one
         for (int i = 0; i < numRobots; i++) {
             System.out.print("Enter robot name" + (i + 1) + ": ");
