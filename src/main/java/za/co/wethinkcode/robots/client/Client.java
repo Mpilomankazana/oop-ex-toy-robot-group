@@ -2,7 +2,7 @@ package za.co.wethinkcode.robots.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import za.co.wethinkcode.robots.protocol.Protocol;
+
 
 import java.io.*;
 import java.net.Socket;
