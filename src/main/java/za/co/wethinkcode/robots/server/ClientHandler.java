@@ -200,14 +200,7 @@ public class ClientHandler implements Runnable {
                             out.println(Protocol.buildErrorResponse("Robot not found"));
                             continue;
                         }
-                        robot.setStatus("REPAIR");
-                        try {
-                            Thread.sleep(world.getRepairTime() * 1000L);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                        }
-                        robot.setShields(world.getMaxShields());
-                        robot.setStatus("NORMAL");
+                        engine.repair(robot, world);
                         StateData state = new StateData(
                                 new int[]{robot.getX(), robot.getY()},
                                 robot.getDirection().name(),
