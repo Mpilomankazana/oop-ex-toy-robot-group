@@ -117,6 +117,17 @@ public class GameEngine {
         return new FireResult("MISS", -1, shooter.getShots());
     }
 
+    public void repair(Robot robot,World world){
+        robot.setStatus("REPAIR");
+        try {
+            Thread.sleep(world.getRepairTime()* 1000l);
+        } catch (InterruptedException e){
+            Thread.currentThread().interrupt();
+        }
+        robot.setShields(world.getMaxShields());
+        robot.setStatus("NORMAL");
+    }
+
     public List<Map<String, Object>> look(Robot robot, World world) {
         List<Map<String, Object>> objects = new ArrayList<>();
         int visibility = world.getVisibility();
@@ -182,6 +193,8 @@ public class GameEngine {
     }
 
     public Robot launch(String name, World world){
+
+
        Random random = new Random();
        int halfWidth = world.getWidth() / 2;
        int halfHeight = world.getHeight() / 2;
