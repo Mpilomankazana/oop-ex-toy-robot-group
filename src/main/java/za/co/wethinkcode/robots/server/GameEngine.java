@@ -12,25 +12,31 @@ import java.util.Random;
 
 public class GameEngine {
 
-    public int moveForward(Robot robot, int steps,World world){
+    public int moveForward(Robot robot, int steps, World world) {
 
         int moved = 0;
 
-        for (int i = 0; i < steps; i++){
+        for (int i = 0; i < steps; i++) {
             int nextX = robot.getX();
             int nextY = robot.getY();
 
-            switch (robot.getDirection()){
-                case NORTH -> nextY += 1;
-                case SOUTH -> nextY -= 1;
-                case EAST -> nextX += 1;
-                case WEST -> nextX -= 1;
+            switch (robot.getDirection()) {
+                case NORTH ->
+                    nextY += 1;
+                case SOUTH ->
+                    nextY -= 1;
+                case EAST ->
+                    nextX += 1;
+                case WEST ->
+                    nextX -= 1;
 
             }
-            if (world.isBlocked(nextX, nextY)) break;
+            if (world.isBlocked(nextX, nextY)) {
+                break;
+            }
             robot.setX(nextX);
             robot.setY(nextY);
-            moved ++;
+            moved++;
 
         }
         world.moveRobot(robot.getName(), robot.getX(), robot.getY());
@@ -45,13 +51,19 @@ public class GameEngine {
             int nextY = robot.getY();
 
             switch (robot.getDirection()) {
-                case NORTH -> nextY -= 1;
-                case SOUTH -> nextY += 1;
-                case EAST  -> nextX -= 1;
-                case WEST  -> nextX += 1;
+                case NORTH ->
+                    nextY -= 1;
+                case SOUTH ->
+                    nextY += 1;
+                case EAST ->
+                    nextX -= 1;
+                case WEST ->
+                    nextX += 1;
             }
 
-            if (world.isBlocked(nextX, nextY)) break;
+            if (world.isBlocked(nextX, nextY)) {
+                break;
+            }
 
             robot.setX(nextX);
             robot.setY(nextY);
@@ -62,13 +74,16 @@ public class GameEngine {
         return moved;
     }
 
-
     public Direction turn(Robot robot, String turnDir) {
-        if (turnDir == null) return null;
+        if (turnDir == null) {
+            return null;
+        }
 
         switch (turnDir.trim().toLowerCase()) {
-            case "right" -> robot.setDirection(robot.getDirection().turnRight());
-            case "left" -> robot.setDirection(robot.getDirection().turnLeft());
+            case "right" ->
+                robot.setDirection(robot.getDirection().turnRight());
+            case "left" ->
+                robot.setDirection(robot.getDirection().turnLeft());
             default -> {
                 return null;
             }
@@ -94,10 +109,14 @@ public class GameEngine {
             int ty = shooter.getY();
 
             switch (shooter.getDirection()) {
-                case NORTH -> ty += dist;
-                case SOUTH -> ty -= dist;
-                case EAST  -> tx += dist;
-                case WEST  -> tx -= dist;
+                case NORTH ->
+                    ty += dist;
+                case SOUTH ->
+                    ty -= dist;
+                case EAST ->
+                    tx += dist;
+                case WEST ->
+                    tx -= dist;
             }
 
             Robot target = world.getRobotAt(tx, ty);
@@ -106,12 +125,14 @@ public class GameEngine {
                 if (target.getShields() <= 0) {
                     target.setStatus("DEAD");
                     world.removeRobot(target.getName());
-                    return new FireResult("KILL", dist,shooter.getShots());
+                    return new FireResult("KILL", dist, shooter.getShots());
                 }
                 return new FireResult("HIT", dist, shooter.getShots());
             }
 
-            if (world.hasObstacle(tx, ty)) break;
+            if (world.hasObstacle(tx, ty)) {
+                break;
+            }
         }
 
         return new FireResult("MISS", -1, shooter.getShots());
@@ -129,10 +150,14 @@ public class GameEngine {
                 int cy = robot.getY();
 
                 switch (dir) {
-                    case NORTH -> cy += dist;
-                    case SOUTH -> cy -= dist;
-                    case EAST  -> cx += dist;
-                    case WEST  -> cx -= dist;
+                    case NORTH ->
+                        cy += dist;
+                    case SOUTH ->
+                        cy -= dist;
+                    case EAST ->
+                        cx += dist;
+                    case WEST ->
+                        cx -= dist;
                 }
 
                 if (!world.isInsideWorld(cx, cy)) {
@@ -169,34 +194,41 @@ public class GameEngine {
         return entry;
     }
 
-    public static class FireResult{
+    public static class FireResult {
+
         public final String outcome;
         public final int distance;
         public final int shotleft;
 
-        public FireResult(String outcome, int distance, int shotleft){
+        public FireResult(String outcome, int distance, int shotleft) {
             this.outcome = outcome;
             this.distance = distance;
             this.shotleft = shotleft;
         }
     }
 
-    public Robot launch(String name, World world){
-       Random random = new Random();
-       int halfWidth = world.getWidth() / 2;
-       int halfHeight = world.getHeight() / 2;
-       int x, y;
-       int attempts = 0;
+    public Robot launch(String name, World world) {
+        return launch(name, "sniper", world);
+    }
 
-       do{
-           x = random.nextInt(world.getWidth()) - halfWidth;
-           y = random.nextInt(world.getHeight()) - halfHeight;
-           attempts++;
-           if (attempts > 1000) return null;
-       } while (world.isBlocked(x,y));
-       Robot robot = new Robot(name , x ,y);
-       world.addRobot(robot);
-       return robot;
+    public Robot launch(String name, String make, World world) {
+        Random random = new Random();
+        int halfWidth = world.getWidth() / 2;
+        int halfHeight = world.getHeight() / 2;
+        int x, y;
+        int attempts = 0;
+
+        do {
+            x = random.nextInt(world.getWidth()) - halfWidth;
+            y = random.nextInt(world.getHeight()) - halfHeight;
+            attempts++;
+            if (attempts > 1000) {
+                return null;
+            }
+        } while (world.isBlocked(x, y));
+        Robot robot = new Robot(name, make, x, y);
+        world.addRobot(robot);
+        return robot;
     }
 
 }
