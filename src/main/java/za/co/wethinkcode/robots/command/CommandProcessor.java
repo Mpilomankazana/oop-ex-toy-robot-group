@@ -7,7 +7,7 @@ public class CommandProcessor {
 
     private static final Set<String> VALID_COMMANDS = Set.of(
             "launch", "look", "forward", "back",
-            "turn", "state", "repair", "reload", "fire"
+            "turn", "state", "repair", "reload", "fire", "help"
     );
 
 

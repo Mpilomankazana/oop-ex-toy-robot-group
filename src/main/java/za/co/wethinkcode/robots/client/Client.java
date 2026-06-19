@@ -137,6 +137,9 @@ public class Client {
                             "\",\"arguments\":[]}";
                     break;
 
+                case "help":
+                    printHelp();
+                    continue;
                 default:
                     System.out.println("Unknown command");
                     continue;
@@ -358,6 +361,21 @@ public class Client {
         } catch (Exception e) {
             System.out.println(response);
         }
+    }
+
+    private static void printHelp() {
+        System.out.println("\n=== ROBOT WORLD - AVAILABLE COMMANDS ===");
+        System.out.println(" launch                 - Launch your robot into the world");
+        System.out.println(" forward <steps>        - Move forward by number of steps");
+        System.out.println(" back <steps>           - Move backwards by number of steps");
+        System.out.println(" turn left|right        - Turn the robot left or right");
+        System.out.println(" look                   -  Look around and see nearby objects");
+        System.out.println(" fire                   -  Fire in the direction you're facing");
+        System.out.println(" repair                 - Repair shields (robot pauses during repair)");
+        System.out.println(" state                  -  Show your robot's current state");
+        System.out.println(" help                   -   Show this help message");
+        System.out.println(" quit                   - Disconnect from the server");
+        System.out.println("================================================\n");
     }
 }
 
