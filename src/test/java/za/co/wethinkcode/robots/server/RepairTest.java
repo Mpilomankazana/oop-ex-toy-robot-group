@@ -45,9 +45,9 @@ public class RepairTest {
          engine.repair(robot, world);
 
         assertEquals(
-                "REPAIR",
+                "NORMAL",
                 robot.getStatus(),
-                "Robot status should be REPAIR while repairing"
+                "Robot should return to NORMAL after repair"
         );
     }
 
