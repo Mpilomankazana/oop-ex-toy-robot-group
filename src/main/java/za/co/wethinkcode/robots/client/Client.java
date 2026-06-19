@@ -2,7 +2,7 @@ package za.co.wethinkcode.robots.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import za.co.wethinkcode.robots.protocol.Protocol;
+
 
 import java.io.*;
 import java.net.Socket;
@@ -63,7 +63,7 @@ public class Client {
             //ask which robot to control
             System.out.print("which robot do you want to control ?(" + String.join("/", robotNames) + "): ");
             String robotName = scanner.nextLine();
-            //
+
             if (!robotNames.contains(robotName)) {
                 System.out.println("Unknown robot. choose from: " + robotNames);
                 continue;
@@ -88,7 +88,6 @@ public class Client {
                 break;
             }
 
-            // String json = "{\"robot\":\"" + robotName + "\",\"command\":\"" + input + "\",\"arguments\":[]}";
             String[] parts = input.trim().split("\\s+");
             String command = parts[0].toLowerCase();
 
@@ -271,7 +270,7 @@ public class Client {
                 System.out.println(message);
                 System.out.println(" Position: " + state.get("position"));
                 System.out.println(" Direction: " + state.get("direction").asText());
-                //CHECK IF THE ROBOT IS DEAD
+                // CHECK IF THE ROBOT IS DEAD
                 String status = state.get("status").asText();
                 if (status.equals("DEAD")) {
                     System.out.println("Your robot is DEAD");
