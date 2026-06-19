@@ -63,7 +63,7 @@ public class Client {
             //ask which robot to control
             System.out.print("which robot do you want to control ?(" + String.join("/", robotNames) + "): ");
             String robotName = scanner.nextLine();
-            //
+
             if (!robotNames.contains(robotName)) {
                 System.out.println("Unknown robot. choose from: " + robotNames);
                 continue;
