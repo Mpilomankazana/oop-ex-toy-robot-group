@@ -112,4 +112,67 @@ public class WorldTest {
 
         assertNull(world.getRobot("HAL"));
     }
+
+    @Test
+    void shouldReturnRobotAtCoordinates() {
+
+        World world = new World(10,10);
+
+        Robot robot = new Robot("HAL",2,3);
+
+        world.addRobot(robot);
+
+        assertEquals(robot,
+                world.getRobotAt(2,3));
+    }
+
+    @Test
+    void shouldReturnNullWhenNoRobotAtCoordinates() {
+
+        World world = new World(10,10);
+
+        assertNull(world.getRobotAt(5,5));
+    }
+
+    @Test
+    void shouldMoveRobotUsingMoveRobotMethod() {
+
+        World world = new World(10,10);
+
+        Robot robot = new Robot("HAL");
+
+        world.addRobot(robot);
+
+        world.moveRobot("HAL",4,4);
+
+        assertEquals(4, robot.getX());
+        assertEquals(4, robot.getY());
+    }
+
+    @Test
+    void shouldReturnRobotListCopy() {
+
+        World world = new World(10,10);
+
+        Robot robot = new Robot("HAL");
+
+        world.addRobot(robot);
+
+        assertEquals(1,
+                world.getRobots().size());
+    }
+
+    @Test
+    void shouldRemoveRobotFromCoordinateLookup() {
+
+        World world = new World(10,10);
+
+        Robot robot = new Robot("HAL",1,1);
+
+        world.addRobot(robot);
+
+        world.removeRobot("HAL");
+
+        assertNull(world.getRobotAt(1,1));
+    }
 }
