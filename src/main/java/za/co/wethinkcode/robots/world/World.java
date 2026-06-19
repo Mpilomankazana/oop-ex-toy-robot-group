@@ -15,6 +15,7 @@ public class World {
     private int repairTime;
     private int reloadTime;
     private int maxShields;
+    private int maxShots;
 
     private final List<Robot> robots;
     private final Set<String> obstaclePositions;
@@ -27,6 +28,7 @@ public World(int width, int height){
     this.repairTime = 5;
     this.reloadTime = 5;
     this.maxShields = 3;
+    this.maxShots = 5;
     this.robots = new ArrayList<>();
     this.obstaclePositions = new HashSet<>();
 
@@ -46,6 +48,7 @@ public World(int width, int height){
         this.repairTime = Integer.parseInt(config.getProperty("repair.time", "5"));
         this.reloadTime = Integer.parseInt(config.getProperty("reload.time", "5"));
         this.maxShields = Integer.parseInt(config.getProperty("max.shields", "3"));
+        this.maxShots = Integer.parseInt(config.getProperty("max.shots", "5"));
         this.robots             = new ArrayList<>();
         this.obstaclePositions  = new HashSet<>();
         loadObstacles(config);
@@ -85,6 +88,12 @@ public World(int width, int height){
      * @return maximum shield strength
      */
     public int getMaxShields() { return maxShields; }
+
+    /**
+     * Returns the maximum number of shots a robot can have.
+     * @return maximum shots
+     */
+    public int getMaxShots() { return maxShots; }
 
     /**
      * Returns the robot at the given position, or null if the position is empty.
