@@ -49,7 +49,8 @@ public class ClientHandler implements Runnable {
     public void run() {
         try (
                 BufferedReader in = new BufferedReader(
-                        new InputStreamReader(socket.getInputStream())); PrintWriter out = new PrintWriter(
+                        new InputStreamReader(socket.getInputStream()));
+                PrintWriter out = new PrintWriter(
                         socket.getOutputStream(), true)) {
             String line;
             while ((line = in.readLine()) != null) {
@@ -170,7 +171,6 @@ public class ClientHandler implements Runnable {
                                 robot.getStatus());
                         out.println(Protocol.buildOkResponse(
                                 java.util.Map.of("objects", objects), state));
-
                     }
                     case "fire" -> {
                         Robot robot = world.getRobot(robotName);
@@ -193,7 +193,6 @@ public class ClientHandler implements Runnable {
                                 state
                         ));
                     }
-
                     case "repair" -> {
                         Robot robot = world.getRobot(robotName);
                         if (robot == null) {
@@ -217,7 +216,7 @@ public class ClientHandler implements Runnable {
                         );
                         out.println(Protocol.buildOkResponse("Shields repaired", state));
                     }
-                    /**
+                    /*
                      * Handles the reload command. Blocks the robot for the
                      * configured reload time, then restores shots to maximum
                      * and sets status to NORMAL.
@@ -229,20 +228,12 @@ public class ClientHandler implements Runnable {
                             continue;
                         }
                         robot.setStatus("RELOAD");
-                        StateData reloadingState = new StateData(
-                                new int[]{robot.getX(), robot.getY()},
-                                robot.getDirection().name(),
-                                robot.getShields(),
-                                robot.getShots(),
-                                robot.getStatus()
-                        );
-                        out.println(Protocol.buildOkResponse("Reloading...", reloadingState));
                         try {
                             Thread.sleep(world.getReloadTime() * 1000L);
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
                         }
-                        robot.setShots(world.getMaxShields());
+                        robot.setShots(world.getMaxShots());
                         robot.setStatus("NORMAL");
                         StateData doneState = new StateData(
                                 new int[]{robot.getX(), robot.getY()},
@@ -253,11 +244,9 @@ public class ClientHandler implements Runnable {
                         );
                         out.println(Protocol.buildOkResponse("Reloaded", doneState));
                     }
-
                     default -> {
                         out.println(Protocol.buildErrorResponse("Command not implemented: " + command));
                     }
-
                 }
 
                 // Check if robot is dead after each command
@@ -269,7 +258,6 @@ public class ClientHandler implements Runnable {
                     }
                 }
             }
-
         } catch (IOException e) {
             System.out.println("Client disconnected: " + e.getMessage());
         } finally {
@@ -284,3 +272,4 @@ public class ClientHandler implements Runnable {
         }
     }
 }
+
