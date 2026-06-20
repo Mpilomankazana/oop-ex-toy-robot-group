@@ -26,6 +26,7 @@ public class Client {
 
         Socket socket = new Socket(host, port);
         System.out.println("Connected to server");
+        System.out.println("Type 'help' to see available commands.");
 
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(socket.getInputStream()));
@@ -34,8 +35,20 @@ public class Client {
         Scanner scanner = new Scanner(System.in);
 
         //launching more than one robot
-        System.out.println("How many robots do you want to launch ? ");
-        int numRobots = Integer.parseInt(scanner.nextLine());
+        int numRobots = 0;
+        while (true) {
+            System.out.println("How many robots do you want to launch ?");
+            String input = scanner.nextLine().trim();
+            if (input.equalsIgnoreCase("help")) {
+                printHelp();
+                continue;
+            }try{
+                numRobots = Integer.parseInt(input);
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            }
+        }
 
         //store all robot names
         List<String> robotNames = new ArrayList<>();
