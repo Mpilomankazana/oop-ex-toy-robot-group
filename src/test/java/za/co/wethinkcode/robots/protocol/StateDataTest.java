@@ -56,4 +56,24 @@ public class StateDataTest {
 
         assertEquals("NORMAL", state.getStatus());
     }
+
+    @Test
+    void shouldCreateUsingConstructor(){
+
+        StateData state =
+                new StateData(
+                        new int[]{1,2},
+                        "NORTH",
+                        3,
+                        5,
+                        "NORMAL"
+                );
+
+        assertEquals(1, state.getPosition()[0]);
+        assertEquals(2, state.getPosition()[1]);
+        assertEquals("NORTH", state.getDirection());
+        assertEquals(3, state.getShields());
+        assertEquals(5, state.getShots());
+        assertEquals("NORMAL", state.getStatus());
+    }
 }
