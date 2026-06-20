@@ -2,9 +2,7 @@ package za.co.wethinkcode.robots.world;
 
 import za.co.wethinkcode.robots.robot.Robot;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 public class World {
@@ -18,21 +16,21 @@ public class World {
     private int maxShots;
 
     private final List<Robot> robots;
-    private final Set<String> obstaclePositions;
+    private final List<Obstacle> obstacles;
 
 
-public World(int width, int height){
-    this.width = width;
-    this.height = height;
-    this.visibility = 5;
-    this.repairTime = 5;
-    this.reloadTime = 5;
-    this.maxShields = 3;
-    this.maxShots = 5;
-    this.robots = new ArrayList<>();
-    this.obstaclePositions = new HashSet<>();
+    public World(int width, int height){
+        this.width = width;
+        this.height = height;
+        this.visibility = 5;
+        this.repairTime = 5;
+        this.reloadTime = 5;
+        this.maxShields = 3;
+        this.maxShots = 5;
+        this.robots = new ArrayList<>();
+        this.obstacles = new ArrayList<>();
+    }
 
-}
     /**
      * Creates a World loaded from a config.properties file.
      * Reads world size, visibility, and obstacle positions from the file.
@@ -48,22 +46,28 @@ public World(int width, int height){
         this.repairTime = Integer.parseInt(config.getProperty("repair.time", "5"));
         this.reloadTime = Integer.parseInt(config.getProperty("reload.time", "5"));
         this.maxShields = Integer.parseInt(config.getProperty("max.shields", "3"));
-        this.maxShots = Integer.parseInt(config.getProperty("max.shots", "5"));
-        this.robots             = new ArrayList<>();
-        this.obstaclePositions  = new HashSet<>();
+        this.maxShots   = Integer.parseInt(config.getProperty("max.shots", "5"));
+        this.robots     = new ArrayList<>();
+        this.obstacles  = new ArrayList<>();
         loadObstacles(config);
     }
 
     /**
      * Reads obstacle positions from the config file and adds them to the world.
+     * Supports an optional width and height per obstacle (defaults to 1x1
+     * if not specified) so obstacles can be rectangular. All config-loaded
+     * obstacles are created as Mountains by default.
      * @param config the loaded Properties object
      */
     private void loadObstacles(java.util.Properties config) {
         int count = Integer.parseInt(config.getProperty("obstacle.count", "0"));
         for (int i = 1; i <= count; i++) {
             String[] parts = config.getProperty("obstacle." + i).split(",");
-            addObstacle(Integer.parseInt(parts[0].trim()),
-                    Integer.parseInt(parts[1].trim()));
+            int ox = Integer.parseInt(parts[0].trim());
+            int oy = Integer.parseInt(parts[1].trim());
+            int w  = parts.length > 2 ? Integer.parseInt(parts[2].trim()) : 1;
+            int h  = parts.length > 3 ? Integer.parseInt(parts[3].trim()) : 1;
+            addObstacle(new Mountain(ox, oy, w, h));
         }
     }
 
@@ -78,11 +82,13 @@ public World(int width, int height){
      * @return repair time in seconds
      */
     public int getRepairTime() { return repairTime; }
-     /**
+
+    /**
      * Returns the reload time in seconds — how long reload blocks movement.
      * @return reload time in seconds
      */
     public int getReloadTime() { return reloadTime; }
+
     /**
      * Returns the maximum shield strength a robot can have.
      * @return maximum shield strength
@@ -94,14 +100,6 @@ public World(int width, int height){
      * @return maximum shots
      */
     public int getMaxShots() { return maxShots; }
-
-    /**
-     * Returns the robot at the given position, or null if the position is empty.
-     * @param x x-coordinate to check
-     * @param y y-coordinate to check
-     * @return the Robot at (x,y) or null
-     */
-
 
     /**
      * Updates a robot's stored position after movement.
@@ -117,16 +115,36 @@ public World(int width, int height){
         }
     }
 
-
+    /**
+     * Adds a single-point (1x1) Mountain obstacle at the given coordinate.
+     * Kept for backward compatibility with existing callers.
+     * @param x x-coordinate
+     * @param y y-coordinate
+     */
     public synchronized void addObstacle(int x, int y) {
-
-        obstaclePositions.add(key(x, y));
+        addObstacle(new Mountain(x, y, 1, 1));
     }
 
+    /**
+     * Adds an already-constructed Obstacle (Mountain, Lake, or Pit) to the world.
+     * @param obstacle the obstacle to add
+     */
+    public synchronized void addObstacle(Obstacle obstacle) {
+        obstacles.add(obstacle);
+    }
 
+    /**
+     * Returns true if the given coordinate falls inside any obstacle's
+     * rectangular footprint.
+     * @param x x-coordinate to check
+     * @param y y-coordinate to check
+     * @return true if an obstacle occupies that coordinate
+     */
     public boolean hasObstacle(int x, int y) {
-
-        return obstaclePositions.contains(key(x, y));
+        for (Obstacle o : obstacles) {
+            if (o.occupies(x, y)) return true;
+        }
+        return false;
     }
 
 
@@ -152,9 +170,9 @@ public World(int width, int height){
 
 
     public synchronized void removeRobot(String name) {
-
         robots.removeIf(r -> r.getName().equals(name));
     }
+
     /**
     * Returns the robot at the given position, or null if the position is empty.
     * @param x x-coordinate to check
@@ -166,7 +184,7 @@ public World(int width, int height){
           if (r.getX() == x && r.getY() == y) return r;
       }
       return null;
-   } 
+   }
 
 
     public synchronized Robot getRobot(String name) {
@@ -178,7 +196,6 @@ public World(int width, int height){
 
 
     public synchronized List<Robot> getRobots() {
-
         return new ArrayList<>(robots);
     }
 
@@ -187,12 +204,6 @@ public World(int width, int height){
     }
     public int getHeight() {
         return height;
-    }
-
-
-    private String key(int x, int y) {
-
-        return x + "," + y;
     }
 
     public synchronized MovementResults moveForward(Robot robot, int steps){
