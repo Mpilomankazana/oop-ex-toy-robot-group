@@ -23,9 +23,22 @@ public class Robot {
         this.x         = 0;
         this.y         = 0;
         this.direction = Direction.NORTH;
-        this.shields   = 3;
-        this.shots     = 5;
         this.status    = "NORMAL";
+
+        switch (make.toLowerCase()) {
+            case "tank" -> {
+                this.shields = 6;
+                this.shots   = 2;
+            }
+            case "scout" -> {
+                this.shields = 0;
+                this.shots   = 1;
+            }
+            default -> {
+                this.shields = 3;
+                this.shots   = 6;
+            }
+        }
     }
 
     public Robot(String name, int x, int y) {
