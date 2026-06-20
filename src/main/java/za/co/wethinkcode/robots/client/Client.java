@@ -83,13 +83,22 @@ public class Client {
 
         while (true) {
 
-            //ask which robot to control
-            System.out.print("which robot do you want to control ?(" + String.join("/", robotNames) + "): ");
-            String robotName = scanner.nextLine();
+            String robotName;
 
-            if (!robotNames.contains(robotName)) {
-                System.out.println("Unknown robot. choose from: " + robotNames);
-                continue;
+            // if only one robot, control it automatically
+            if (robotNames.size() == 1) {
+                robotName = robotNames.get(0);
+            }else {
+
+
+                //ask which robot to control
+                System.out.print("which robot do you want to control ?(" + String.join("/", robotNames) + "): ");
+                robotName = scanner.nextLine();
+
+                if (!robotNames.contains(robotName)) {
+                    System.out.println("Unknown robot. choose from: " + robotNames);
+                    continue;
+                }
             }
 
             //preventing dead robots from sending commands
