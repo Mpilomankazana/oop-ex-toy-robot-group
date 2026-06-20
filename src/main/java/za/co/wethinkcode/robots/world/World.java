@@ -181,6 +181,13 @@ public class World {
         return false;
     }
 
+    public String getObstacleType (int x, int y) {
+        for (Obstacle o : obstacles) {
+            if (o.occupies(x, y)) return o.getType();
+        }
+        return null;
+    }
+
     public boolean isInsideWorld(int x, int y) {
         return x >= -(width / 2) && x <= (width / 2)
                 && y >= -(height / 2) && y <= (height / 2);
