@@ -176,8 +176,10 @@ public class GameEngine {
                     found = true;
                     break;
                 }
-                if (world.hasObstacle(cx, cy)) {
-                    objects.add(sighting(dir.name(), "OBSTACLE", dist));
+
+                String obstacleType = world.getObstacleType(cx, cy);
+                if (obstacleType != null) {
+                    objects.add(sighting(dir.name(), obstacleType, dist));
                     found = true;
                     break;
                 }
