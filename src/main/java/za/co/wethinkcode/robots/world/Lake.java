@@ -1,6 +1,5 @@
 package za.co.wethinkcode.robots.world;
 
-import java.util.SplittableRandom;
 
 /**
  * Represents a Lake obstacle - a rectangular water terrain feature.

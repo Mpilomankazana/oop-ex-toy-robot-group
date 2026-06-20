@@ -17,7 +17,7 @@ public class MovementResults {
     }
 
 
-    public String getMessege(){
+    public String getMessage(){
         return message;
     }
 

@@ -78,7 +78,7 @@ public class MovementTest {
 
         assertFalse(result.isSuccess());
 
-        assertEquals("Obstructed" , result.getMessege());
+        assertEquals("Obstructed" , result.getMessage());
 
         assertEquals(0, robot.getX());
         assertEquals(0, robot.getY());
@@ -183,6 +183,6 @@ public class MovementTest {
         assertFalse(result.isSuccess());
 
         assertEquals("Obstructed",
-                result.getMessege());
+                result.getMessage());
     }
 }

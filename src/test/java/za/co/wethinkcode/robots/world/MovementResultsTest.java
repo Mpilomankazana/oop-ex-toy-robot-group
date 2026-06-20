@@ -18,6 +18,6 @@ public class MovementResultsTest {
         MovementResults result =
                 new MovementResults(false, "Blocked");
 
-        assertEquals("Blocked", result.getMessege());
+        assertEquals("Blocked", result.getMessage());
     }
 }
