@@ -369,4 +369,49 @@ public class GameEngineTest {
 
         assertEquals("MISS", result.outcome);
     }
+
+    @Test
+    void shouldReturnNullForNullTurnDirection(){
+
+        GameEngine engine = new GameEngine();
+
+        Robot robot = new Robot("HAL");
+
+        assertNull(engine.turn(robot, null));
+    }
+
+    @Test
+    void shouldDetectWorldEdgeInLook(){
+
+        World world = new World(5, 5);
+
+        Robot robot = new Robot("HAL", 0, 2);
+
+        world.addRobot(robot);
+
+        GameEngine engine = new GameEngine();
+
+        var result = engine.look(robot, world);
+
+        assertTrue(result.stream().anyMatch(item ->
+                        item.get("type").equals("EDGE"))
+        );
+    }
+
+    @Test
+    void shouldReturnNoneWhenNothingVisible(){
+
+        World world = new World(100, 100);
+
+        Robot robot = new Robot("HAL", 0, 0);
+
+        world.addRobot(robot);
+
+        GameEngine engine = new GameEngine();
+
+        var result = engine.look(robot, world);
+
+        assertTrue(result.stream().anyMatch(item ->
+                item.get("type").equals("NONE")));
+    }
 }
