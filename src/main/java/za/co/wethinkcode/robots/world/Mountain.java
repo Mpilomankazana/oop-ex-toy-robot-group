@@ -11,6 +11,11 @@ public class Mountain  extends Obstacle {
         super(x, y, width, height);
     }
 
+    @Override
+    public String getType() {
+        return "MOUNTAIN";
+    }
+
 
 
 }
