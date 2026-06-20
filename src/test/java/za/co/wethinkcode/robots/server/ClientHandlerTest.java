@@ -197,13 +197,9 @@ public class ClientHandlerTest {
                         new InputStreamReader(
                                 client.getInputStream()));
 
-        out.println("""
-                {
-                    "robot":"HAL",
-                    "command":"dance",
-                    "arguments":[]
-                }
-                """);
+        out.println(
+                "{\"robot\":\"HAL\",\"command\":\"dance\",\"arguments\":[]}"
+        );
 
         String response = in.readLine();
 
@@ -238,13 +234,8 @@ public class ClientHandlerTest {
                         new InputStreamReader(
                                 client.getInputStream()));
 
-        out.println("""
-                {
-                    "robot":"HAL",
-                    "command":"state",
-                    "arguments":[]
-                }
-                """);
+        out.println("{\"robot\":\"HAL\",\"command\":\"state\",\"arguments\":[]}"
+        );
 
         String response = in.readLine();
 
@@ -279,23 +270,13 @@ public class ClientHandlerTest {
                         new InputStreamReader(
                                 client.getInputStream()));
 
-        out.println("""
-        {
-          "robot":"HAL",
-          "command":"launch",
-          "arguments":[]
-        }
-        """);
+        out.println("{\"robot\":\"HAL\",\"command\":\"launch\",\"arguments\":[]}"
+        );
 
         in.readLine();
 
-        out.println("""
-        {
-          "robot":"HAL",
-          "command":"turn",
-          "arguments":["spin"]
-        }
-        """);
+        out.println("{\"robot\":\"HAL\",\"command\":\"turn\",\"arguments\":[\"spin\"]}"
+        );
 
         String response = in.readLine();
 
