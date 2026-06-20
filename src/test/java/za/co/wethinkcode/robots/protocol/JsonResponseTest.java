@@ -8,7 +8,7 @@ import  static  org.junit.jupiter.api.Assertions.*;
 // Tests JSON response serialization.
 public class JsonResponseTest {
 
-    //Response should serialize to JSON correclty.
+    //Response should serialize to JSON correctly.
     @Test
     void shouldSerializeResponseToJson() throws  Exception {
 
@@ -74,5 +74,21 @@ public class JsonResponseTest {
         assertThrows(Exception.class, () -> {
             mapper.readValue("{invalid}", Response.class);
         });
+    }
+
+    @Test
+    void shouldStoreStateObject(){
+
+        StateData state = new StateData();
+
+        Response response =
+                new Response(
+                        "OK",
+                        "Done",
+                        state);
+
+        assertEquals("OK", response.getResult());
+        assertEquals("Done", response.getData());
+        assertEquals(state, response.getState());
     }
 }
