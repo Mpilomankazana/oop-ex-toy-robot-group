@@ -199,7 +199,11 @@ public class GameEngineTest {
 
         List<Map<String, Object>> result = engine.look(robot, world);
 
-        assertTrue(result.stream().anyMatch(item -> item.get("type").equals("OBSTACLE")));
+        assertTrue(result.stream().anyMatch(item ->
+                item.get("type").equals("MOUNTAIN") ||
+                item.get("type").equals("LAKE") ||
+                item.get("type").equals("PIT")
+        ));
     }
 
     @Test
