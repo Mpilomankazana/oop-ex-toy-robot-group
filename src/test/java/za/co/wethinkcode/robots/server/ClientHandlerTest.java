@@ -132,4 +132,175 @@ public class ClientHandlerTest {
         client.close();
         serverSocket.close();
     }
+
+    @Test
+    void shouldReturnErrorForInvalidJson() throws Exception{
+
+        World world = new World(10, 10);
+
+        ServerSocket serverSocket = new ServerSocket(6003);
+
+        Thread serverThread = new Thread(() ->{
+            try {
+                Socket socket = serverSocket.accept();
+                new ClientHandler(socket, world).run();
+            } catch (Exception e) {
+                fail(e);
+            }
+        });
+
+        serverThread.start();
+
+        Socket client = new Socket("localhost", 6003);
+
+        PrintWriter out = new PrintWriter(client.getOutputStream(), true);
+
+        BufferedReader in =
+                new BufferedReader(
+                        new InputStreamReader(
+                                client.getInputStream()));
+
+        out.println("{invalid}");
+
+        String response = in.readLine();
+
+        assertTrue(response.contains("ERROR"));
+
+        client.close();
+        serverSocket.close();
+    }
+
+    @Test
+    void shouldHandleUnknownCommand() throws Exception{
+
+        World world = new World(10, 10);
+
+        ServerSocket serverSocket = new ServerSocket(6004);
+
+        Thread serverThread = new Thread(() ->{
+            try{
+                Socket socket = serverSocket.accept();
+                new ClientHandler(socket, world).run();
+            } catch (Exception e) {
+                fail(e);
+            }
+        });
+
+        serverThread.start();
+
+        Socket client = new Socket("localhost", 6004);
+
+        PrintWriter out = new PrintWriter(client.getOutputStream(), true);
+
+        BufferedReader in =
+                new BufferedReader(
+                        new InputStreamReader(
+                                client.getInputStream()));
+
+        out.println("""
+                {
+                    "robot":"HAL",
+                    "command":"dance",
+                    "arguments":[]
+                }
+                """);
+
+        String response = in.readLine();
+
+        assertTrue(response.contains("Command not implemented"));
+    }
+
+    @Test
+    void shouldReturnRobotNotFoundForState() throws Exception{
+
+        World world = new World(10, 10);
+
+        ServerSocket serverSocket = new ServerSocket(6005);
+
+        Thread serverThread = new Thread(() -> {
+            try {
+                Socket socket = serverSocket.accept();
+                new ClientHandler(socket, world).run();
+            } catch (Exception e) {
+                fail(e);
+            }
+        });
+
+        serverThread.start();
+
+        Socket client = new Socket("localhost", 6005);
+
+        PrintWriter out =
+                new PrintWriter(client.getOutputStream(), true);
+
+        BufferedReader in  =
+                new BufferedReader(
+                        new InputStreamReader(
+                                client.getInputStream()));
+
+        out.println("""
+                {
+                    "robot":"HAL",
+                    "command":"state",
+                    "arguments":[]
+                }
+                """);
+
+        String response = in.readLine();
+
+        assertTrue(response.contains("Robot not found"));
+    }
+
+    @Test
+    void shouldRejectInvalidTurnDirection() throws Exception{
+
+        World world = new World(10, 10);
+
+        ServerSocket serverSocket = new ServerSocket(6006);
+
+        Thread serverThread = new Thread(() -> {
+            try {
+                Socket socket = serverSocket.accept();
+                new ClientHandler(socket, world).run();
+            } catch (Exception e) {
+                fail(e);
+            }
+        });
+
+        serverThread.start();
+
+        Socket client = new Socket("localhost", 6006);
+
+        PrintWriter out =
+                new PrintWriter(client.getOutputStream(), true);
+
+        BufferedReader in =
+                new BufferedReader(
+                        new InputStreamReader(
+                                client.getInputStream()));
+
+        out.println("""
+        {
+          "robot":"HAL",
+          "command":"launch",
+          "arguments":[]
+        }
+        """);
+
+        in.readLine();
+
+        out.println("""
+        {
+          "robot":"HAL",
+          "command":"turn",
+          "arguments":["spin"]
+        }
+        """);
+
+        String response = in.readLine();
+
+        assertTrue(
+                response.contains(
+                        "Invalid direction"));
+    }
 }
