@@ -177,4 +177,38 @@ public class RobotTest {
         assertTrue(robot.toString()
                 .contains("HAL"));
     }
+
+    @Test
+    void shouldCreateRobotWithMake(){
+
+        Robot robot = new Robot("HAL", "tank");
+
+        assertEquals("tank", robot.getMake());
+    }
+
+    @Test
+    void shouldCreateRobotWithPositionAndMake(){
+
+        Robot robot = new Robot(
+                "HAL",
+                "tank",
+                5,
+                6);
+
+        assertEquals(5, robot.getX());
+        assertEquals(6, robot.getY());
+        assertEquals("tank", robot.getMake());
+    }
+
+    @Test
+    void shouldCreateRobotWithPosition(){
+
+        Robot robot =
+                new Robot("HAL",
+                        3,
+                        4);
+
+        assertEquals(3, robot.getX());
+        assertEquals(4, robot.getY());
+    }
 }
