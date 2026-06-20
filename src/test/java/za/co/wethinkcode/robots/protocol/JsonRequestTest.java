@@ -119,4 +119,18 @@ public class JsonRequestTest {
         Request request = mapper.readValue(json, Request.class);
         assertEquals("R2D2", request.getRobot());
     }
+
+    @Test
+    void shouldSetValuesManually(){
+
+        Request request = new Request();
+
+        request.setRobot("HAL");
+        request.setCommand("launch");
+        request.setArguments(new Object[]{"sniper"});
+
+        assertEquals("HAL", request.getRobot());
+        assertEquals("launch", request.getCommand());
+        assertEquals(1, request.getArguments().length);
+    }
 }
